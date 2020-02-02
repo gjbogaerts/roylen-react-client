@@ -17,6 +17,7 @@ import AdCreateScreen from './src/screens/AdCreateScreen';
 import InfoScreen from './src/screens/InfoScreen';
 import UserAuthControlScreen from './src/screens/UserAuthControlScreen';
 import { Provider as AuthProvider } from './src/context/AuthContext';
+import { Provider as AdProvider } from './src/context/AdContext';
 import { styles, colors as MyColor } from './src/styles/styles';
 
 const fetchFonts = () => {
@@ -79,7 +80,7 @@ const TabsNavigator = createBottomTabNavigator(
 				tabBarLabel: 'About',
 				tabBarIcon: ({ tintColor }) => {
 					return (
-						<Ionicons name="ios-information" size={25} color={tintColor} />
+						<Ionicons name="ios-information" size={35} color={tintColor} />
 					);
 				}
 			}
@@ -126,7 +127,9 @@ const App = () => {
 		<ThemeProvider theme={styles}>
 			<View style={styles.container}>
 				<AuthProvider>
-					<AppContainer ref={navigator => setNavigator(navigator)} />
+					<AdProvider>
+						<AppContainer ref={navigator => setNavigator(navigator)} />
+					</AdProvider>
 				</AuthProvider>
 			</View>
 		</ThemeProvider>

@@ -1,22 +1,32 @@
 const categories = [
-	{ Interior: ['Babyrooms', 'Bedlinnen', 'Kids rooms', 'Accessories'] },
-	{ Clothing: ['For babies', 'Girls', 'Boys'] },
-	{ Safety: ['Chairs', 'Playpens', 'Babyphones'] },
-	{ 'On the road': ['Car seats', 'Buggies', 'Strollers'] },
-	{
-		Toys: [
-			'Games',
-			'Construction',
-			'Hobbies',
-			'Outdoors',
-			'Lego',
-			'Playmobil',
-			'Disney',
-			'Star Wars',
-			'Fortnite',
-			'Pokemon'
-		]
-	}
+	{ label: 'Interior', value: 'interior' },
+	{ label: '\t\tBabyrooms', value: 'babyrooms' },
+	{ label: '\t\tBedlinnen', value: 'bedlinnen' },
+	{ label: '\t\tKids rooms', value: 'kidsrooms' },
+	{ label: '\t\tAccessories', value: 'accessories' },
+	{ label: 'Clothing', value: 'clothing' },
+	{ label: '\t\tBabies', value: 'babies' },
+	{ label: '\t\tGirls', value: 'girls' },
+	{ label: '\t\tBoys', value: 'boys' },
+	{ label: 'Safety', value: 'safety' },
+	{ label: '\t\tChairs', value: 'chairs' },
+	{ label: '\t\tPlaypens', value: 'playpens' },
+	{ label: '\t\tBabyphones', value: 'babyphones' },
+	{ label: 'On the move', value: 'on the move' },
+	{ label: '\t\tCar Seats', value: 'car seats' },
+	{ label: '\t\tBuggies', value: 'buggies' },
+	{ label: '\t\tStrollers', value: 'strollers' },
+	{ label: 'Toys', value: 'Toys' },
+	{ label: '\t\tGames', value: 'Games' },
+	{ label: '\t\tConstruction', value: 'Construction' },
+	{ label: '\t\tHobbies', value: 'Hobbies' },
+	{ label: '\t\tOutdoors', value: 'Outdoors' },
+	{ label: '\t\tLego', value: 'Lego' },
+	{ label: '\t\tPlaymobil', value: 'Playmobil' },
+	{ label: '\t\tDisney', value: 'Disney' },
+	{ label: '\t\tStar Wars', value: 'Star Wars' },
+	{ label: '\t\tFortnite', value: 'Fortnite' },
+	{ label: '\t\tPokemon', value: 'Pokemon' }
 ];
 
 export default categories;

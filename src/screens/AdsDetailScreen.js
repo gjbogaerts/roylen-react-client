@@ -1,10 +1,10 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-const AdsDetailScreen = props => {
+const AdsDetailScreen = ({ navigation }) => {
 	return (
 		<View>
-			<Text>AdsDetailScreen</Text>
+			<Text>AdsDetailScreen for ad with id {navigation.getParam('id')}</Text>
 		</View>
 	);
 };

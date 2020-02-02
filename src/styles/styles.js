@@ -15,7 +15,7 @@ export const officalStyles = StyleSheet.create({
 	},
 	contentContainer: {
 		flex: 1,
-		marginTop: 80,
+		marginTop: 40,
 		marginHorizontal: 15,
 		marginBottom: 40
 	},
@@ -44,7 +44,8 @@ export const styles = {
 			fontFamily: 'dosis-bold',
 			fontSize: 28,
 			color: colors.color,
-			marginBottom: 25
+			marginBottom: 25,
+			textAlign: 'center'
 		},
 		style: {
 			fontFamily: 'dosis',
