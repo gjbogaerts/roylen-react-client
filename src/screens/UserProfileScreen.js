@@ -1,8 +1,22 @@
 import React, { useContext, useEffect, useState, Fragment } from 'react';
 import * as ImagePicker from 'expo-image-picker';
-import { View, StyleSheet, AsyncStorage, Alert } from 'react-native';
-import { Button, Text, Card, Input, ButtonGroup } from 'react-native-elements';
+import {
+	View,
+	StyleSheet,
+	AsyncStorage,
+	Alert,
+	ActivityIndicator
+} from 'react-native';
+import {
+	Button,
+	Text,
+	Card,
+	Input,
+	ButtonGroup,
+	Avatar
+} from 'react-native-elements';
 import { styles, colors } from '../styles/styles';
+import { getBaseUrl } from '../api/axios';
 import { Context as AuthContext } from '../context/AuthContext';
 import Spacer from '../components/UI/Spacer';
 
@@ -14,8 +28,7 @@ const UserProfileScreen = props => {
 		const fetchUserData = async () => {
 			const userData = await AsyncStorage.getItem('userData');
 			const u = JSON.parse(userData);
-			// setUser(JSON.parse(userData));
-			// console.log(u);
+			console.log(u);
 			setUser(u);
 			setEmail(u.email);
 		};
@@ -65,8 +78,8 @@ const UserProfileScreen = props => {
 			} else {
 				const pickedImage = await ImagePicker.launchImageLibraryAsync({
 					allowsEditing: true,
-					allowsMultipleSelection: false,
-					// base64: true,
+					allowsMultipleSelection: false /* 
+					base64: true, */,
 					aspect: [1, 1]
 				});
 				setProfilePic(pickedImage);
@@ -86,8 +99,16 @@ const UserProfileScreen = props => {
 
 		return (
 			<Fragment>
+				<Avatar
+					source={{ uri: getBaseUrl() + user.avatar }}
+					size="medium"
+					rounded
+					PlaceholderContent={<ActivityIndicator />}
+				/>
 				<Text>Your screen name is {user.screenName}.</Text>
-				<Text>Your current credit is {user.nix} nix.</Text>
+				<Text>
+					Your current credit is {user.nix} nix. {user.avatar}
+				</Text>
 				<View style={styles.cardContainer}>
 					<Card title="Change email or profile pic">
 						<Input

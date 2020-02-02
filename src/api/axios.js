@@ -1,14 +1,20 @@
 import axios from 'axios';
 import { AsyncStorage } from 'react-native';
 
-//while developing, changes every 8 hours:
-const baseUrl = 'https://api.roylen.ga';
+let baseUrl = null;
+if (__DEV__) {
+	baseUrl = 'http://localhost:3000';
+} else {
+	baseUrl = 'https://api.roylen.ga';
+}
 
 const instance = axios.create({
 	baseURL: baseUrl
 });
 
-//TODO: update profile screen, set actions to change screenname, email
+export const getBaseUrl = () => {
+	return baseUrl;
+};
 
 instance.interceptors.request.use(
 	async config => {

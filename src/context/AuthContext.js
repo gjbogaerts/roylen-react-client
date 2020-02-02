@@ -1,7 +1,8 @@
-import { AsyncStorage } from 'react-native';
+import { AsyncStorage, Platform } from 'react-native';
 import createDataContext from './createDataContext';
 import { navigate } from '../utils/navigationRef';
 import axios from '../api/axios';
+import FormData from 'form-data';
 import User from '../models/User';
 
 const authReducer = (state, action) => {
@@ -22,6 +23,12 @@ const authReducer = (state, action) => {
 				...state,
 				token: null,
 				errorMessage: ''
+			};
+		case 'update':
+			return {
+				...state,
+				errorMessage: '',
+				token: action.payload
 			};
 		case 'clear_error_message':
 			return {
@@ -60,6 +67,44 @@ const signin = dispatch => async ({ email, password }) => {
 		dispatch({
 			type: 'error',
 			payload: 'Cannot log in, something went wrong'
+		});
+	}
+};
+
+const updateProfileInfo = dispatch => async (email, profilePic) => {
+	const tmpUri = profilePic.uri;
+	const uriParts = tmpUri.split('/');
+	const fileName = uriParts[uriParts.length - 1];
+	const data = new FormData();
+	data.append('file', {
+		name: fileName,
+		uri: Platform.OS === 'android' ? tmpUri : tmpUri.replace('file://', '')
+	});
+	data.append('email', email);
+	try {
+		const response = await axios.post('/api/profile', data, {
+			headers: {
+				...axios.headers,
+				Accept: 'application/json',
+				'Content-Type': 'multipart/form-data'
+			}
+		});
+		if (response.data.success) {
+			const userData = await AsyncStorage.getItem('userData');
+			const u = JSON.parse(userData);
+			u.email = email;
+			u.avatar = response.data.avatar;
+			await AsyncStorage.setItem('userData', JSON.stringify(u));
+			dispatch({
+				type: 'update',
+				payload: u.token
+			});
+			navigate('Profile');
+		}
+	} catch (e) {
+		dispatch({
+			type: 'error',
+			payload: 'Cannot update your profile, something went wrong'
 		});
 	}
 };
@@ -114,11 +159,6 @@ const signout = dispatch => async () => {
 		type: 'sign_out'
 	});
 	navigate('Auth');
-};
-
-const updateProfileInfo = dispatch => async (email, profilePic) => {
-	console.log(`Email: ${email}`);
-	console.log(`ProfilePic: ${JSON.stringify(profilePic)}`);
 };
 
 export const { Provider, Context } = createDataContext(
