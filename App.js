@@ -1,15 +1,13 @@
 import React, { useState } from 'react';
-
 import { View } from 'react-native';
 import { AppLoading } from 'expo';
 import * as Font from 'expo-font';
-
 import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
-
-import { setNavigator } from './src/utils/navigationRef';
-import { ThemeProvider } from 'react-native-elements';
+import { setNavigator, navigate } from './src/utils/navigationRef';
+import { ThemeProvider, colors } from 'react-native-elements';
+import { Ionicons } from '@expo/vector-icons';
 import UserLoginScreen from './src/screens/UserLoginScreen';
 import UserSignupScreen from './src/screens/UserSignupScreen';
 import UserProfileScreen from './src/screens/UserProfileScreen';
@@ -18,10 +16,8 @@ import AdsDetailScreen from './src/screens/AdsDetailScreen';
 import AdCreateScreen from './src/screens/AdCreateScreen';
 import InfoScreen from './src/screens/InfoScreen';
 import UserAuthControlScreen from './src/screens/UserAuthControlScreen';
-
 import { Provider as AuthProvider } from './src/context/AuthContext';
-
-import { styles } from './src/styles/styles';
+import { styles, colors as MyColor } from './src/styles/styles';
 
 const fetchFonts = () => {
 	return Font.loadAsync({
@@ -41,17 +37,66 @@ const AuthNavigator = createStackNavigator(
 	}
 );
 
-const AdsNavigator = createStackNavigator({
-	AdsList: AdsListScreen,
-	AdsDetail: AdsDetailScreen
-});
+const AdsNavigator = createStackNavigator(
+	{
+		AdsList: AdsListScreen,
+		AdsDetail: AdsDetailScreen
+	},
+	{
+		navigationOptions: {
+			tabBarLabel: 'Ads List',
+			tabBarIcon: ({ tintColor }) => {
+				return <Ionicons name="ios-list" size={25} color={tintColor} />;
+			}
+		}
+	}
+);
 
-const TabsNavigator = createBottomTabNavigator({
-	AdCreate: AdCreateScreen,
-	AdsFlow: AdsNavigator,
-	Profile: UserProfileScreen,
-	Info: InfoScreen
-});
+const TabsNavigator = createBottomTabNavigator(
+	{
+		AdCreate: {
+			screen: AdCreateScreen,
+			navigationOptions: {
+				tabBarLabel: 'Create new Ad',
+				tabBarIcon: ({ tintColor }) => {
+					return <Ionicons name="ios-add" size={25} color={tintColor} />;
+				}
+			}
+		},
+		AdsFlow: AdsNavigator,
+		Profile: {
+			screen: UserProfileScreen,
+			navigationOptions: {
+				tabBarLabel: 'Your Profile',
+				tabBarIcon: ({ tintColor }) => {
+					return <Ionicons name="ios-person" size={25} color={tintColor} />;
+				}
+			}
+		},
+		Info: {
+			screen: InfoScreen,
+			navigationOptions: {
+				tabBarLabel: 'About',
+				tabBarIcon: ({ tintColor }) => {
+					return (
+						<Ionicons name="ios-information" size={25} color={tintColor} />
+					);
+				}
+			}
+		}
+	},
+	{
+		initialRouteName: 'AdsFlow',
+		defaultNavigationOptions: {
+			tabBarOptions: {
+				inactiveTintColor: MyColor.backgroundColor,
+				inactiveBackgroundColor: MyColor.color,
+				activeTintColor: MyColor.color,
+				activeBackgroundColor: MyColor.backgroundColor
+			}
+		}
+	}
+);
 
 const MainNavigator = createSwitchNavigator(
 	{
