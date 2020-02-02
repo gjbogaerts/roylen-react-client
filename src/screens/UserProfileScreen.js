@@ -21,21 +21,20 @@ import { Context as AuthContext } from '../context/AuthContext';
 import Spacer from '../components/UI/Spacer';
 
 const UserProfileScreen = props => {
+	const { signout, updateProfileInfo } = useContext(AuthContext);
 	const [user, setUser] = useState(null);
 	const [email, setEmail] = useState('');
 	const [profilePic, setProfilePic] = useState('');
+
 	useEffect(() => {
 		const fetchUserData = async () => {
 			const userData = await AsyncStorage.getItem('userData');
 			const u = JSON.parse(userData);
-			console.log(u);
 			setUser(u);
 			setEmail(u.email);
 		};
 		fetchUserData();
 	}, []);
-
-	const { signout, updateProfileInfo } = useContext(AuthContext);
 
 	const handleProfileChange = () => {
 		updateProfileInfo(email, profilePic);
@@ -58,7 +57,6 @@ const UserProfileScreen = props => {
 			} else {
 				const pickedImage = await ImagePicker.launchCameraAsync({
 					allowsEditing: true,
-					base64: true,
 					aspect: [1, 1]
 				});
 				setProfilePic(pickedImage);
@@ -78,8 +76,7 @@ const UserProfileScreen = props => {
 			} else {
 				const pickedImage = await ImagePicker.launchImageLibraryAsync({
 					allowsEditing: true,
-					allowsMultipleSelection: false /* 
-					base64: true, */,
+					allowsMultipleSelection: false,
 					aspect: [1, 1]
 				});
 				setProfilePic(pickedImage);
@@ -99,16 +96,20 @@ const UserProfileScreen = props => {
 
 		return (
 			<Fragment>
-				<Avatar
-					source={{ uri: getBaseUrl() + user.avatar }}
-					size="medium"
-					rounded
-					PlaceholderContent={<ActivityIndicator />}
-				/>
-				<Text>Your screen name is {user.screenName}.</Text>
-				<Text>
-					Your current credit is {user.nix} nix. {user.avatar}
-				</Text>
+				<View style={styles.containerRow}>
+					<View style={localStyles.avatar}>
+						<Avatar
+							source={{ uri: getBaseUrl() + user.avatar }}
+							size="medium"
+							rounded
+							PlaceholderContent={<ActivityIndicator />}
+						/>
+					</View>
+					<View style={{ ...styles.containerCol, ...localStyles.profileInfo }}>
+						<Text>Your screen name is {user.screenName}.</Text>
+						<Text>Your current credit is {user.nix} nix.</Text>
+					</View>
+				</View>
 				<View style={styles.cardContainer}>
 					<Card title="Change email or profile pic">
 						<Input
@@ -141,5 +142,14 @@ const UserProfileScreen = props => {
 		</View>
 	);
 };
+
+const localStyles = StyleSheet.create({
+	avatar: {
+		justifyContent: 'center'
+	},
+	profileInfo: {
+		marginLeft: 15
+	}
+});
 
 export default UserProfileScreen;

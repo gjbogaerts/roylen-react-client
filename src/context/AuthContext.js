@@ -15,18 +15,21 @@ const authReducer = (state, action) => {
 		case 'auth':
 			return {
 				...state,
+				flashMessage: 'You are successfully signed in',
 				token: action.payload,
 				errorMessage: ''
 			};
 		case 'sign_out':
 			return {
 				...state,
+				flashMessage: 'You have signed out',
 				token: null,
 				errorMessage: ''
 			};
 		case 'update':
 			return {
 				...state,
+				flashMessage: 'Your profile has been updated',
 				errorMessage: '',
 				token: action.payload
 			};
@@ -55,7 +58,8 @@ const signin = dispatch => async ({ email, password }) => {
 			response.data.token,
 			response.data.screenName,
 			response.data.email,
-			response.data.nix
+			response.data.nix,
+			response.data.avatar
 		);
 		await AsyncStorage.setItem('userData', JSON.stringify(user));
 		dispatch({
@@ -99,7 +103,7 @@ const updateProfileInfo = dispatch => async (email, profilePic) => {
 				type: 'update',
 				payload: u.token
 			});
-			navigate('Profile');
+			navigate('Tabs', { flashMessage: 'Your profile has been updated' });
 		}
 	} catch (e) {
 		dispatch({

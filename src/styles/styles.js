@@ -28,6 +28,12 @@ export const officalStyles = StyleSheet.create({
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 		marginVertical: 15
+	},
+	containerRow: {
+		flexDirection: 'row'
+	},
+	containerCol: {
+		flexDirection: 'column'
 	}
 });
 
