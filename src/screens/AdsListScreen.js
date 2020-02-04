@@ -13,7 +13,7 @@ import { getBaseUrl } from '../api/axios';
 import categories from '../models/Categories';
 
 const AdsListScreen = ({ navigation }) => {
-	const { state, getAllAds } = useContext(AdContext);
+	const { state, getAllAds, getAd } = useContext(AdContext);
 
 	useEffect(() => {
 		const getAds = async () => {
@@ -31,10 +31,12 @@ const AdsListScreen = ({ navigation }) => {
 					data={state.adList}
 					keyExtractor={item => item._id}
 					renderItem={({ item }) => {
+						const tmpDescription = item.description.split(' ');
+						const description = tmpDescription.slice(0, 5).join(' ') + '...';
 						return (
 							<TouchableOpacity
 								onPress={() => {
-									navigation.navigate('AdsDetail', { id: item._id });
+									getAd(item._id, item.title);
 								}}
 							>
 								<ListItem
@@ -42,9 +44,10 @@ const AdsListScreen = ({ navigation }) => {
 									leftAvatar={{
 										source: { uri: getBaseUrl() + item.pics[0] }
 									}}
+									rightSubtitle={description}
 									bottomDivider
 									chevron
-									subtitle={item.description}
+									subtitle={item.creator.screenName}
 								/>
 							</TouchableOpacity>
 						);

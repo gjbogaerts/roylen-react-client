@@ -26,6 +26,8 @@ const AuthForm = ({
 					<Input
 						label="Choose a screen name"
 						placeholder="Minimum of 8 characters"
+						autoCapitalize="none"
+						autoCorrect={false}
 						onChangeText={val => setScreenName(val)}
 						value={screenName}
 					/>

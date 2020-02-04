@@ -34,6 +34,12 @@ export const officalStyles = StyleSheet.create({
 	},
 	containerCol: {
 		flexDirection: 'column'
+	},
+	caption: {
+		fontSize: 14
+	},
+	link: {
+		textDecorationLine: 'underline'
 	}
 });
 
