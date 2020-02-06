@@ -17,7 +17,12 @@ const adReducer = (state, action) => {
 				currentAd: action.payload,
 				errorMessage: ''
 			};
-
+		case 'placeAd':
+			return {
+				...state,
+				adList: [],
+				errorMessage: ''
+			};
 		case 'error':
 			return {
 				...state,
@@ -59,8 +64,45 @@ const getAd = dispatch => async (adId, adTitle) => {
 	}
 };
 
+const placeAd = dispatch => async adObj => {
+	// console.log(adObj);
+	const tmpUri = adObj.picture.uri;
+	const uriParts = tmpUri.split('/');
+	const fileName = uriParts[uriParts.length - 1];
+	const data = new FormData();
+
+	data.append('file', {
+		name: fileName,
+		uri: Platform.OS === 'android' ? tmpUri : tmpUri.replace('file://', '')
+	});
+	const { title, description, virtualPrice, category, creator } = adObj;
+	data.append('title', title);
+	data.append('description', description);
+	data.append('virtualPrice', virtualPrice);
+	data.append('category', category);
+	data.append('creator', creator);
+
+	try {
+		await axios.post('/api/adCreate', data, {
+			headers: {
+				...axios.headers,
+				Accept: 'application/json',
+				'Content-Type': 'multipart/form-data'
+			}
+		});
+		const response = await axios.get('/api/ads');
+		dispatch({
+			type: 'getAllAds',
+			payload: response.data
+		});
+		navigate('AdsList');
+	} catch (err) {
+		console.log(err);
+	}
+};
+
 export const { Provider, Context } = createDataContext(
 	adReducer,
-	{ getAllAds, getAd },
+	{ getAllAds, getAd, placeAd },
 	{ adList: null, currentAd: null, errorMessage: '' }
 );
