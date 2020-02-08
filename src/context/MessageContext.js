@@ -16,6 +16,12 @@ const messageReducer = (state, action) => {
 				message: null,
 				errorMessage: action.payload
 			};
+		case 'cleanup':
+			return {
+				...state,
+				message: null,
+				errorMessage: ''
+			};
 		default:
 			return state;
 	}
@@ -28,7 +34,6 @@ const sendMessage = dispatch => async msg => {
 		// console.log(msg);
 		const response = await axios.post('/api/message', msg);
 		if (response.status === 200) {
-			console.log('sent!');
 			dispatch({
 				type: 'messageSent',
 				payload: 1
@@ -41,6 +46,12 @@ const sendMessage = dispatch => async msg => {
 	}
 };
 
+const cleanUpMessage = dispatch => () => {
+	dispatch({
+		type: 'cleanup'
+	});
+};
+
 const handleError = (dispatch, errMsg) => {
 	dispatch({
 		type: 'error',
@@ -49,6 +60,6 @@ const handleError = (dispatch, errMsg) => {
 };
 export const { Provider, Context } = createDataContext(
 	messageReducer,
-	{ sendMessage, readMessage },
+	{ sendMessage, readMessage, cleanUpMessage },
 	{ message: null, errorMessage: '' }
 );

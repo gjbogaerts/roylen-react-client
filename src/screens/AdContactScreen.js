@@ -6,13 +6,14 @@ import { colors, styles } from '../styles/styles';
 import { Context as MessageContext } from '../context/MessageContext';
 import Message from '../models/Message';
 import Spacer from '../components/UI/Spacer';
+import { NavigationEvents } from 'react-navigation';
 
 const AdContactScreen = ({ navigation }) => {
 	const currentAd = navigation.getParam('concerning');
 	const [name, setName] = useState('');
 	const [message, setMessage] = useState('');
 	const [user, setUser] = useState(null);
-	const { state, sendMessage } = useContext(MessageContext);
+	const { state, sendMessage, cleanUpMessage } = useContext(MessageContext);
 
 	useEffect(() => {
 		const fetchUserData = async () => {
@@ -20,6 +21,7 @@ const AdContactScreen = ({ navigation }) => {
 			const u = JSON.parse(userData);
 			setUser(u);
 		};
+
 		fetchUserData();
 	}, []);
 
@@ -27,6 +29,11 @@ const AdContactScreen = ({ navigation }) => {
 		return (
 			<View style={styles.contentContainer}>
 				<View style={styles.cardContainer}>
+					<NavigationEvents
+						onWillBlur={payload => {
+							cleanUpMessage();
+						}}
+					/>
 					<Card title={`Contact ${currentAd.creator.screenName}`}>
 						<Text>{state.message}</Text>
 					</Card>
@@ -51,6 +58,11 @@ const AdContactScreen = ({ navigation }) => {
 		<KeyboardAwareScrollView behavior="padding">
 			<View style={styles.contentContainer}>
 				<View style={styles.cardContainer}>
+					<NavigationEvents
+						onWillBlur={payload => {
+							cleanUpMessage();
+						}}
+					/>
 					<Card title={`Contact ${currentAd.creator.screenName}`}>
 						<Text style={styles.formText}>Regards: {currentAd.title}</Text>
 						<Spacer />
