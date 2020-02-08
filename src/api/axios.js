@@ -1,13 +1,14 @@
 import axios from 'axios';
 import { AsyncStorage } from 'react-native';
+import Constants from 'expo-constants';
 
 let baseUrl = null;
-if (__DEV__) {
+if (!Constants.isDevice) {
 	baseUrl = 'http://localhost:3000';
 } else {
 	baseUrl = 'https://api.roylen.ga';
 }
-
+// baseUrl = 'https://api.roylen.ga';
 const instance = axios.create({
 	baseURL: baseUrl
 });

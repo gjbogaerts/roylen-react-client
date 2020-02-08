@@ -3,7 +3,8 @@ import { StyleSheet } from 'react-native';
 export const colors = {
 	backgroundColor: '#faf5e4',
 	color: '#004445',
-	accentedColor: '#f8b400'
+	accentedColor: '#f8b400',
+	errorColor: '#dd3322'
 };
 
 export const officalStyles = StyleSheet.create({
@@ -40,6 +41,10 @@ export const officalStyles = StyleSheet.create({
 	},
 	link: {
 		textDecorationLine: 'underline'
+	},
+	alertButton: {
+		flexDirection: 'row',
+		justifyContent: 'flex-end'
 	}
 });
 

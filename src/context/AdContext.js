@@ -90,6 +90,7 @@ const placeAd = dispatch => async adObj => {
 				'Content-Type': 'multipart/form-data'
 			}
 		});
+		//TODO: refactor to update state with new ad, instead of having to pick them up from server again.
 		const response = await axios.get('/api/ads');
 		dispatch({
 			type: 'getAllAds',
