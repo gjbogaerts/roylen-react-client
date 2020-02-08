@@ -19,6 +19,7 @@ import InfoScreen from './src/screens/InfoScreen';
 import UserAuthControlScreen from './src/screens/UserAuthControlScreen';
 import { Provider as AuthProvider } from './src/context/AuthContext';
 import { Provider as AdProvider } from './src/context/AdContext';
+import { Provider as MessageProvider } from './src/context/MessageContext';
 import { styles, colors as MyColor } from './src/styles/styles';
 
 const fetchFonts = () => {
@@ -158,7 +159,9 @@ const App = () => {
 			<View style={styles.container}>
 				<AuthProvider>
 					<AdProvider>
-						<AppContainer ref={navigator => setNavigator(navigator)} />
+						<MessageProvider>
+							<AppContainer ref={navigator => setNavigator(navigator)} />
+						</MessageProvider>
 					</AdProvider>
 				</AuthProvider>
 			</View>

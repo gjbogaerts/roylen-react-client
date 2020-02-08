@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View, AsyncStorage } from 'react-native';
 import { Button, Text, Card, Input } from 'react-native-elements';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { colors, styles } from '../styles/styles';
+import { Context as MessageContext } from '../context/MessageContext';
+import Message from '../models/Message';
 import Spacer from '../components/UI/Spacer';
 
 const AdContactScreen = ({ navigation }) => {
@@ -10,6 +12,7 @@ const AdContactScreen = ({ navigation }) => {
 	const [name, setName] = useState('');
 	const [message, setMessage] = useState('');
 	const [user, setUser] = useState(null);
+	const { sendMessage } = useContext(MessageContext);
 
 	useEffect(() => {
 		const fetchUserData = async () => {
@@ -20,8 +23,16 @@ const AdContactScreen = ({ navigation }) => {
 		fetchUserData();
 	}, []);
 
-	const sendMessage = () => {
-		console.log(name, message, user._id, currentAd._id, currentAd.title);
+	const startSendSequence = () => {
+		const msg = new Message(
+			name,
+			message,
+			user._id,
+			currentAd.creator._id,
+			currentAd._id,
+			currentAd.title
+		);
+		sendMessage(msg);
 	};
 
 	return (
@@ -58,7 +69,7 @@ const AdContactScreen = ({ navigation }) => {
 							/>
 							<Button
 								title="Send"
-								onPress={sendMessage}
+								onPress={startSendSequence}
 								buttonStyle={{ ...styles.Button.buttonStyle }}
 								containerStyle={{
 									...styles.Button.containerStyle,
