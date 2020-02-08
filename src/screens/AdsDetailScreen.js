@@ -64,6 +64,7 @@ const AdsDetailScreen = ({ navigation }) => {
 						height: 300
 					}}
 				/> */}
+				<Text h4>{navigation.getParam('title')}</Text>
 				<TouchableOpacity style={styles.alertButton} onPress={warnAdmin}>
 					<Ionicons name="ios-alert" color={colors.errorColor} size={24} />
 				</TouchableOpacity>
@@ -80,7 +81,9 @@ const AdsDetailScreen = ({ navigation }) => {
 							{currentAd.category}
 						</Text>
 						<TouchableOpacity
-							onPress={() => console.log('pressed')}
+							onPress={() =>
+								navigation.navigate('AdContact', { concerning: currentAd })
+							}
 							style={styles.alertButton}
 						>
 							<Ionicons
@@ -101,26 +104,9 @@ const AdsDetailScreen = ({ navigation }) => {
 	);
 };
 
-// const styles = StyleSheet.create({});
-
-AdsDetailScreen.navigationOptions = ({ navigation }) => {
+AdsDetailScreen.navigationOptions = nav => {
 	return {
-		headerStyle: {
-			backgroundColor: colors.backgroundColor
-		},
-		headerTintColor: colors.color,
-		title: navigation.getParam('title'),
-		headerTitleStyle: {
-			fontFamily: 'dosis-bold',
-			fontSize: 28,
-			color: colors.color
-		},
-		headerBackTitle: 'Back to ads list',
-		headerBackTitleStyle: {
-			fontFamily: 'dosis',
-			fontSize: 18,
-			color: colors.color
-		}
+		headerShown: true
 	};
 };
 

@@ -19,8 +19,9 @@ import { styles, colors } from '../styles/styles';
 import { getBaseUrl } from '../api/axios';
 import { Context as AuthContext } from '../context/AuthContext';
 import Spacer from '../components/UI/Spacer';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
-const UserProfileScreen = props => {
+const UserProfileScreen = ({ navigation }) => {
 	const { signout, updateProfileInfo } = useContext(AuthContext);
 	const [user, setUser] = useState(null);
 	const [email, setEmail] = useState('');
@@ -108,6 +109,13 @@ const UserProfileScreen = props => {
 					<View style={{ ...styles.containerCol, ...localStyles.profileInfo }}>
 						<Text>Your screen name is {user.screenName}.</Text>
 						<Text>Your current credit is {user.nix} nix.</Text>
+						<TouchableOpacity
+							onPress={() =>
+								navigation.navigate('AdsList', { userId: user._id })
+							}
+						>
+							<Text>You can view your current ads here</Text>
+						</TouchableOpacity>
 					</View>
 				</View>
 				<View style={styles.cardContainer}>

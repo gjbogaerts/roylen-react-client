@@ -14,6 +14,7 @@ import UserProfileScreen from './src/screens/UserProfileScreen';
 import AdsListScreen from './src/screens/AdsListScreen';
 import AdsDetailScreen from './src/screens/AdsDetailScreen';
 import AdCreateScreen from './src/screens/AdCreateScreen';
+import AdContactScreen from './src/screens/AdContactScreen';
 import InfoScreen from './src/screens/InfoScreen';
 import UserAuthControlScreen from './src/screens/UserAuthControlScreen';
 import { Provider as AuthProvider } from './src/context/AuthContext';
@@ -38,10 +39,39 @@ const AuthNavigator = createStackNavigator(
 	}
 );
 
+const AdDetailNavigator = createStackNavigator(
+	{
+		Ad: AdsDetailScreen,
+		AdContact: AdContactScreen
+	},
+	{
+		mode: 'modal',
+		headerMode: 'none',
+		navigationOptions: {
+			headerStyle: {
+				backgroundColor: MyColor.backgroundColor
+			},
+			headerTintColor: MyColor.color,
+			headerTitleStyle: {
+				fontFamily: 'dosis-bold',
+				fontSize: 28,
+				color: MyColor.color
+			},
+			headerBackTitle: 'Back to ads list',
+			headerBackTitleStyle: {
+				fontFamily: 'dosis',
+				fontSize: 18,
+				color: MyColor.color
+			},
+			headerTitle: 'Details'
+		}
+	}
+);
+
 const AdsNavigator = createStackNavigator(
 	{
 		AdsList: AdsListScreen,
-		AdsDetail: AdsDetailScreen
+		AdsDetail: AdDetailNavigator
 	},
 	{
 		navigationOptions: {

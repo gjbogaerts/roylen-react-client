@@ -70,6 +70,9 @@ export const styles = {
 			color: colors.color,
 			fontSize: 18,
 			fontFamily: 'dosis'
+		},
+		inputContainerStyle: {
+			paddingTop: 20
 		}
 	},
 	Button: {
