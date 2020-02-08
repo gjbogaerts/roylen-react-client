@@ -25,8 +25,10 @@ const readMessage = dispatch => async () => {};
 
 const sendMessage = dispatch => async msg => {
 	try {
+		// console.log(msg);
 		const response = await axios.post('/api/message', msg);
 		if (response.status === 200) {
+			console.log('sent!');
 			dispatch({
 				type: 'messageSent',
 				payload: 1
@@ -37,8 +39,6 @@ const sendMessage = dispatch => async msg => {
 	} catch (err) {
 		handleError(dispatch, err.message);
 	}
-
-	console.log(msg);
 };
 
 const handleError = (dispatch, errMsg) => {

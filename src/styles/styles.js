@@ -45,6 +45,12 @@ export const officalStyles = StyleSheet.create({
 	alertButton: {
 		flexDirection: 'row',
 		justifyContent: 'flex-end'
+	},
+	error: {
+		color: colors.errorColor
+	},
+	formText: {
+		marginLeft: 10
 	}
 });
 

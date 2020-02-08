@@ -5,7 +5,7 @@ class Message {
 		this.fromId = fromId;
 		this.toId = toId;
 		this.adId = adId;
-		this.addTitle = this.addTitle;
+		this.adTitle = adTitle;
 	}
 }
 

@@ -12,7 +12,7 @@ const AdContactScreen = ({ navigation }) => {
 	const [name, setName] = useState('');
 	const [message, setMessage] = useState('');
 	const [user, setUser] = useState(null);
-	const { sendMessage } = useContext(MessageContext);
+	const { state, sendMessage } = useContext(MessageContext);
 
 	useEffect(() => {
 		const fetchUserData = async () => {
@@ -22,6 +22,18 @@ const AdContactScreen = ({ navigation }) => {
 		};
 		fetchUserData();
 	}, []);
+
+	if (state.message) {
+		return (
+			<View style={styles.contentContainer}>
+				<View style={styles.cardContainer}>
+					<Card title={`Contact ${currentAd.creator.screenName}`}>
+						<Text>{state.message}</Text>
+					</Card>
+				</View>
+			</View>
+		);
+	}
 
 	const startSendSequence = () => {
 		const msg = new Message(
@@ -40,8 +52,13 @@ const AdContactScreen = ({ navigation }) => {
 			<View style={styles.contentContainer}>
 				<View style={styles.cardContainer}>
 					<Card title={`Contact ${currentAd.creator.screenName}`}>
-						<Text style={{ marginLeft: 10 }}>Regards: {currentAd.title}</Text>
+						<Text style={styles.formText}>Regards: {currentAd.title}</Text>
 						<Spacer />
+						{state.errorMessage ? (
+							<Text style={{ ...styles.error, ...styles.formText }}>
+								{state.errorMessage}
+							</Text>
+						) : null}
 						<Input label="Your name" value={name} onChangeText={setName} />
 						<Input
 							label="Your message"
