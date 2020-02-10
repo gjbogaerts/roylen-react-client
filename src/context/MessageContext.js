@@ -1,9 +1,18 @@
 import createDataContext from './createDataContext';
-import { navigate } from '../utils/navigationRef';
+import { navigate } from '../routes/RootNavigation';
 import axios from '../api/axios';
+import { AsyncStorage } from 'react-native';
 
 const messageReducer = (state, action) => {
+	// console.log(action.payload);
 	switch (action.type) {
+		case 'readMessage':
+			return {
+				...state,
+				received: action.payload,
+				countMessage: action.payload.length
+			};
+
 		case 'messageSent':
 			return {
 				...state,
@@ -27,11 +36,31 @@ const messageReducer = (state, action) => {
 	}
 };
 
-const readMessage = dispatch => async () => {};
+const readMessage = dispatch => async () => {
+	// console.log('called readMessage');
+	const userData = await AsyncStorage.getItem('userData');
+	if (!userData) {
+		// console.log('no userdata');
+		return;
+	}
+	const user = JSON.parse(userData);
+	// console.log(user);
+	try {
+		const response = await axios.get(`/api/message/${user._id}`);
+		// console.log(response.data);
+		dispatch({
+			type: 'readMessage',
+			payload: response.data
+		});
+		// console.log(response.data);
+	} catch (err) {
+		handleError(dispatch, 'Could not retrieve your messages');
+	}
+	// console.log('start message count');
+};
 
 const sendMessage = dispatch => async msg => {
 	try {
-		// console.log(msg);
 		const response = await axios.post('/api/message', msg);
 		if (response.status === 200) {
 			dispatch({
@@ -61,5 +90,5 @@ const handleError = (dispatch, errMsg) => {
 export const { Provider, Context } = createDataContext(
 	messageReducer,
 	{ sendMessage, readMessage, cleanUpMessage },
-	{ message: null, errorMessage: '' }
+	{ message: null, errorMessage: '', countMessage: 0, received: [] }
 );

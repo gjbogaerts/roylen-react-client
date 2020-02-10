@@ -8,18 +8,20 @@ import {
 import { Text, SearchBar, ListItem } from 'react-native-elements';
 import { styles } from '../styles/styles';
 import { Context as AdContext } from '../context/AdContext';
-
+import { Context as MessageContext } from '../context/MessageContext';
 import PickerModal from 'react-native-picker-modal-view';
 import { getBaseUrl } from '../api/axios';
 import categories from '../models/Categories';
 
 const AdsListScreen = ({ navigation }) => {
 	const { state, getAllAds, getAd } = useContext(AdContext);
+	const msgContext = useContext(MessageContext);
 
 	useEffect(() => {
 		const getAds = async () => {
 			await getAllAds();
 		};
+		console.log(msgContext.state.countMessage);
 		getAds();
 	}, []);
 

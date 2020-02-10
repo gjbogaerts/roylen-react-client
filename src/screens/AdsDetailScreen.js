@@ -8,16 +8,15 @@ import { getBaseUrl } from '../api/axios';
 import { Ionicons } from '@expo/vector-icons';
 // import GallerySwiper from 'react-native-gallery-swiper';
 
-const AdsDetailScreen = ({ navigation }) => {
+const AdsDetailScreen = ({ route, navigation }) => {
 	const { state } = useContext(AdContext);
 	const [alert, setAlert] = useState('');
 
-	// console.log(state);
+	navigation.setOptions({ title: state.currentAd.title });
 
 	const imageUri = state.currentAd.pics.map(img => {
 		return getBaseUrl() + img;
 	});
-	// console.log(imageUri);
 	const currentAd = state.currentAd;
 	const date = new Date(currentAd.dateAdded);
 	const dateOptions = {
@@ -64,7 +63,7 @@ const AdsDetailScreen = ({ navigation }) => {
 						height: 300
 					}}
 				/> */}
-				<Text h4>{navigation.getParam('title')}</Text>
+				<Text h4>{currentAd.title}</Text>
 				<TouchableOpacity style={styles.alertButton} onPress={warnAdmin}>
 					<Ionicons name="ios-alert" color={colors.errorColor} size={24} />
 				</TouchableOpacity>

@@ -1,5 +1,5 @@
 import createDataContext from './createDataContext';
-import { navigate } from '../utils/navigationRef';
+import { navigate } from '../routes/RootNavigation';
 import axios from '../api/axios';
 
 const adReducer = (state, action) => {

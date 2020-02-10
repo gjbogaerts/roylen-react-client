@@ -1,6 +1,6 @@
 import { AsyncStorage, Platform } from 'react-native';
 import createDataContext from './createDataContext';
-import { navigate } from '../utils/navigationRef';
+import { navigate } from '../routes/RootNavigation';
 import axios from '../api/axios';
 import FormData from 'form-data';
 import User from '../models/User';
@@ -10,33 +10,38 @@ const authReducer = (state, action) => {
 		case 'error':
 			return {
 				...state,
-				errorMessage: action.payload
+				errorMessage: action.payload,
+				error: true
 			};
 		case 'auth':
 			return {
 				...state,
 				flashMessage: 'You are successfully signed in',
 				token: action.payload,
-				errorMessage: ''
+				errorMessage: '',
+				error: false
 			};
 		case 'sign_out':
 			return {
 				...state,
 				flashMessage: 'You have signed out',
 				token: null,
-				errorMessage: ''
+				errorMessage: '',
+				error: false
 			};
 		case 'update':
 			return {
 				...state,
 				flashMessage: 'Your profile has been updated',
 				errorMessage: '',
-				token: action.payload
+				token: action.payload,
+				error: false
 			};
 		case 'clear_error_message':
 			return {
 				...state,
-				errorMessage: ''
+				errorMessage: '',
+				error: false
 			};
 		default:
 			return state;
@@ -47,7 +52,8 @@ const clearErrorMessage = dispatch => () => {
 	dispatch({ type: 'clear_error_message' });
 };
 
-const signin = dispatch => async ({ email, password }) => {
+const signin = dispatch => async ({ email, password }, msgCallback) => {
+	msgCallback();
 	try {
 		const response = await axios.post('/api/signin', {
 			email,
@@ -148,12 +154,9 @@ const tryLocalSignin = dispatch => async () => {
 	if (userData) {
 		const userJson = JSON.parse(userData);
 		dispatch({
-			type: 'signup',
+			type: 'auth',
 			payload: userJson.token
 		});
-		navigate('Tabs');
-	} else {
-		navigate('Auth');
 	}
 };
 
@@ -175,5 +178,5 @@ export const { Provider, Context } = createDataContext(
 		tryLocalSignin,
 		updateProfileInfo
 	},
-	{ token: null, errorMessage: '' }
+	{ token: null, error: false, errorMessage: '' }
 );

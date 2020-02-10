@@ -13,7 +13,8 @@ const AuthForm = ({
 	navigation,
 	navigationLabel,
 	navigationLink,
-	showSignUp
+	showSignUp,
+	getMessageCount
 }) => {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
@@ -50,7 +51,9 @@ const AuthForm = ({
 				/>
 				<Button
 					title={buttonTitle}
-					onPress={() => onSubmit({ email, password, screenName })}
+					onPress={() =>
+						onSubmit({ email, password, screenName }, getMessageCount)
+					}
 					icon={
 						<Entypo
 							name="login"

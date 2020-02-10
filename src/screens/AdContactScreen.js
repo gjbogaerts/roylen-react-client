@@ -1,15 +1,18 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { View, AsyncStorage } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import { Button, Text, Card, Input } from 'react-native-elements';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { colors, styles } from '../styles/styles';
 import { Context as MessageContext } from '../context/MessageContext';
 import Message from '../models/Message';
 import Spacer from '../components/UI/Spacer';
-import { NavigationEvents } from 'react-navigation';
 
-const AdContactScreen = ({ navigation }) => {
-	const currentAd = navigation.getParam('concerning');
+const AdContactScreen = ({ route, navigation }) => {
+	// console.log(route.params.concerning);
+	// const currentAd = navigation.getParam('concerning');
+
+	const currentAd = route.params.concerning;
 	const [name, setName] = useState('');
 	const [message, setMessage] = useState('');
 	const [user, setUser] = useState(null);
@@ -25,17 +28,23 @@ const AdContactScreen = ({ navigation }) => {
 		fetchUserData();
 	}, []);
 
+	useFocusEffect(
+		useCallback(() => {
+			// do something when the screen is focused
+			return () => {
+				//do something when the screen is unfocused.
+				cleanUpMessage();
+			};
+		}, [])
+	);
+	// console.log(state);
+
 	if (state.message) {
 		return (
 			<View style={styles.contentContainer}>
 				<View style={styles.cardContainer}>
-					<NavigationEvents
-						onWillBlur={payload => {
-							cleanUpMessage();
-						}}
-					/>
 					<Card title={`Contact ${currentAd.creator.screenName}`}>
-						<Text>{state.message}</Text>
+						<Text>{state.message} </Text>
 					</Card>
 				</View>
 			</View>
@@ -51,6 +60,7 @@ const AdContactScreen = ({ navigation }) => {
 			currentAd._id,
 			currentAd.title
 		);
+		// console.log(msg);
 		sendMessage(msg);
 	};
 
@@ -58,11 +68,6 @@ const AdContactScreen = ({ navigation }) => {
 		<KeyboardAwareScrollView behavior="padding">
 			<View style={styles.contentContainer}>
 				<View style={styles.cardContainer}>
-					<NavigationEvents
-						onWillBlur={payload => {
-							cleanUpMessage();
-						}}
-					/>
 					<Card title={`Contact ${currentAd.creator.screenName}`}>
 						<Text style={styles.formText}>Regards: {currentAd.title}</Text>
 						<Spacer />
@@ -112,13 +117,6 @@ const AdContactScreen = ({ navigation }) => {
 			</View>
 		</KeyboardAwareScrollView>
 	);
-};
-
-AdContactScreen.navigationOptions = nav => {
-	return {
-		headerShown: false,
-		headerMode: 'none'
-	};
 };
 
 export default AdContactScreen;
