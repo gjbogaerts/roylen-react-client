@@ -1,6 +1,14 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { View, AsyncStorage } from 'react-native';
-import { Text, Input, Card, Button, ButtonGroup } from 'react-native-elements';
+import { View, AsyncStorage, ScrollView } from 'react-native';
+import {
+	Text,
+	Input,
+	Card,
+	Button,
+	ButtonGroup,
+	CheckBox,
+	Tooltip
+} from 'react-native-elements';
 import * as ImagePicker from 'expo-image-picker';
 import { styles, colors } from '../styles/styles';
 import categories from '../models/Categories';
@@ -15,8 +23,9 @@ const AdCreateScreen = props => {
 	const [virtualPrice, setVirtualPrice] = useState('');
 	const [pics, setPics] = useState(null);
 	const [user, setUser] = useState(null);
+	const [wanted, setWanted] = useState(false);
 
-	const { state, placeAd } = useContext(AdContext);
+	const { placeAd } = useContext(AdContext);
 
 	useEffect(() => {
 		const fetchUser = async () => {
@@ -87,26 +96,94 @@ const AdCreateScreen = props => {
 			category,
 			virtualPrice,
 			pics,
-			user._id
+			user._id,
+			wanted
 		);
 		placeAd(ad);
 	};
 
 	return (
 		<View style={styles.container}>
-			<View style={styles.contentContainer}>
+			<ScrollView style={styles.contentContainer}>
 				<Text h4>Create a new ad</Text>
 				<View style={{ ...styles.cardContainer, paddingVertical: 0 }}>
 					<Card title="Ad details">
-						<Input label="Title" value={title} onChangeText={setTitle} />
+						<CheckBox
+							containerStyle={{
+								backgroundColor: 'transparent',
+								borderColor: 'transparent'
+							}}
+							checked={wanted}
+							onPress={() => setWanted(!wanted)}
+							right
+							size={20}
+							title={
+								<Tooltip
+									popover={
+										<Text style={styles.tooltipTextStyle}>
+											If you check this box, you will place an ad in the
+											'wanted' category. Uncheck it to get your item in the
+											'offered' category.
+										</Text>
+									}
+									height={100}
+									width={300}
+								>
+									<Text>Wanted?</Text>
+								</Tooltip>
+							}
+							checkedIcon="dot-circle-o"
+							uncheckedIcon="circle-o"
+						/>
+
 						<Input
-							label="Description"
+							label={
+								<Tooltip
+									width={200}
+									height={50}
+									popover={
+										<Text style={styles.tooltipTextStyle}>
+											Min. 5, max. 50 chars
+										</Text>
+									}
+								>
+									<Text>Title</Text>
+								</Tooltip>
+							}
+							value={title}
+							onChangeText={setTitle}
+						/>
+
+						<Input
+							label={
+								<Tooltip
+									width={200}
+									height={50}
+									popover={
+										<Text style={styles.tooltipTextStyle}>Max. 5200 chars</Text>
+									}
+								>
+									<Text>Description</Text>
+								</Tooltip>
+							}
 							multiline
 							value={description}
 							onChangeText={setDescription}
 						/>
 						<Input
-							label="Price"
+							label={
+								<Tooltip
+									width={200}
+									height={50}
+									popover={
+										<Text style={styles.tooltipTextStyle}>
+											Only whole numbers
+										</Text>
+									}
+								>
+									<Text>Your price in nix</Text>
+								</Tooltip>
+							}
 							placeholder="Set your price in nix"
 							value={virtualPrice}
 							onChangeText={setVirtualPrice}
@@ -133,7 +210,7 @@ const AdCreateScreen = props => {
 						<Button title="Place your ad" onPress={submitAd} />
 					</Card>
 				</View>
-			</View>
+			</ScrollView>
 		</View>
 	);
 };

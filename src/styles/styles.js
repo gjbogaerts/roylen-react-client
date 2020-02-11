@@ -55,6 +55,11 @@ export const officalStyles = StyleSheet.create({
 	},
 	formText: {
 		marginLeft: 10
+	},
+	tooltipTextStyle: {
+		fontFamily: 'dosis',
+		fontSize: 14,
+		color: colors.backgroundColor
 	}
 });
 
@@ -74,6 +79,9 @@ export const styles = {
 			color: colors.color,
 			marginVertical: 5
 		}
+	},
+	Tooltip: {
+		backgroundColor: colors.color
 	},
 	Input: {
 		labelStyle: {

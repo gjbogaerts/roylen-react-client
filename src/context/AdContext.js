@@ -96,13 +96,17 @@ const placeAd = dispatch => async adObj => {
 		name: fileName,
 		uri: Platform.OS === 'android' ? tmpUri : tmpUri.replace('file://', '')
 	});
-	const { title, description, virtualPrice, category, creator } = adObj;
+	const { title, description, virtualPrice, category, creator, wanted } = adObj;
 	data.append('title', title);
 	data.append('description', description);
 	data.append('virtualPrice', virtualPrice);
 	data.append('category', category);
 	data.append('creator', creator);
-
+	if (wanted) {
+		data.append('adNature', 'wanted');
+	} else {
+		data.append('adNature', 'offered');
+	}
 	try {
 		await axios.post('/api/adCreate', data, {
 			headers: {
