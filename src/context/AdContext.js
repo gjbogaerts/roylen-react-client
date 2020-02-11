@@ -48,6 +48,27 @@ const getAllAds = dispatch => async () => {
 	}
 };
 
+const getSpecAds = dispatch => async (q, inCat) => {
+	try {
+		let response;
+		if (inCat) {
+			const { Value } = q;
+			response = await axios.get(`/api/ads/c/${Value}`);
+		} else {
+			response = await axios.get(`/api/ads/q/${q}`);
+		}
+		dispatch({
+			type: 'getAllAds',
+			payload: response.data
+		});
+	} catch (err) {
+		dispatch({
+			type: 'error',
+			payload: response.data
+		});
+	}
+};
+
 const getAd = dispatch => async (adId, adTitle) => {
 	try {
 		const response = await axios.get(`/api/ads/${adId}`);
@@ -104,6 +125,6 @@ const placeAd = dispatch => async adObj => {
 
 export const { Provider, Context } = createDataContext(
 	adReducer,
-	{ getAllAds, getAd, placeAd },
+	{ getAllAds, getAd, placeAd, getSpecAds },
 	{ adList: null, currentAd: null, errorMessage: '' }
 );

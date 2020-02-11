@@ -5,57 +5,111 @@ import {
 	ActivityIndicator,
 	TouchableOpacity
 } from 'react-native';
-import { Text, SearchBar, ListItem } from 'react-native-elements';
-import { styles } from '../styles/styles';
+import { Text, Overlay, ListItem, Button, Input } from 'react-native-elements';
+import { styles, colors } from '../styles/styles';
 import { Context as AdContext } from '../context/AdContext';
-import { Context as MessageContext } from '../context/MessageContext';
 import PickerModal from 'react-native-picker-modal-view';
 import { getBaseUrl } from '../api/axios';
 import categories from '../models/Categories';
+import { Ionicons } from '@expo/vector-icons';
 
 const AdsListScreen = ({ navigation }) => {
-	const { state, getAllAds, getAd } = useContext(AdContext);
-	const msgContext = useContext(MessageContext);
+	const { state, getAllAds, getAd, getSpecAds } = useContext(AdContext);
+	const [search, setSearch] = useState('');
+	const [searchVisible, setSearchVisible] = useState(false);
+	const [showSearchResult, setShowSearchResult] = useState(false);
 
 	useEffect(() => {
 		const getAds = async () => {
 			await getAllAds();
 		};
-		// console.log(msgContext.state.countMessage);
 		getAds();
 	}, []);
+
+	const startSearch = (itemToSearch, inCategory) => {
+		setSearchVisible(false);
+		getSpecAds(itemToSearch, inCategory);
+		setShowSearchResult(true);
+	};
 
 	const renderList = () => {
 		if (state.adList.length === 0) {
 			return <Text>No ads placed yet.</Text>;
 		} else {
 			return (
-				<FlatList
-					data={state.adList}
-					keyExtractor={item => item._id}
-					renderItem={({ item }) => {
-						const tmpDescription = item.description.split(' ');
-						const description = tmpDescription.slice(0, 5).join(' ') + '...';
-						return (
-							<TouchableOpacity
-								onPress={() => {
-									getAd(item._id, item.title);
-								}}
-							>
-								<ListItem
-									title={item.title}
-									leftAvatar={{
-										source: { uri: getBaseUrl() + item.pics[0] }
+				<View>
+					<Overlay
+						isVisible={searchVisible}
+						onBackdropPress={() => setSearchVisible(false)}
+						borderRadius={15}
+						height={200}
+					>
+						<>
+							<Input
+								value={search}
+								onChangeText={setSearch}
+								placeholder="Your search term"
+							/>
+							<View style={styles.buttonRow}>
+								<Button
+									title="Cancel"
+									buttonStyle={{
+										...styles.Button.buttonStyle,
+										backgroundColor: colors.accentedColor
 									}}
-									rightSubtitle={description}
-									bottomDivider
-									chevron
-									subtitle={item.creator.screenName}
+									titleStyle={{
+										...styles.Button.titleStyle,
+										color: colors.color
+									}}
+									containerStyle={{
+										...styles.Button.containerStyle,
+										flex: 1
+									}}
+									onPress={() => setSearchVisible(false)}
 								/>
-							</TouchableOpacity>
-						);
-					}}
-				/>
+								<Button
+									title="Send"
+									onPress={() => startSearch(search, false)}
+									buttonStyle={{ ...styles.Button.buttonStyle }}
+									containerStyle={{
+										...styles.Button.containerStyle,
+										flex: 2,
+										marginLeft: 10
+									}}
+								/>
+							</View>
+						</>
+					</Overlay>
+					{showSearchResult ? (
+						<Button title="Show all ads" onPress={() => getAllAds()} />
+					) : null}
+					<FlatList
+						data={state.adList}
+						keyExtractor={item => item._id}
+						renderItem={({ item }) => {
+							const tmpDescription = item.description.split(' ');
+							const description = tmpDescription.slice(0, 5).join(' ') + '...';
+							return (
+								<TouchableOpacity
+									onPress={() => {
+										getAd(item._id, item.title);
+									}}
+								>
+									<ListItem
+										title={item.title}
+										leftAvatar={{
+											source: { uri: getBaseUrl() + item.pics[0] }
+										}}
+										rightSubtitle={description}
+										bottomDivider
+										chevron
+										subtitle={item.creator.screenName}
+									/>
+								</TouchableOpacity>
+							);
+						}}
+					/>
+				</View>
 			);
 		}
 	};
@@ -63,18 +117,25 @@ const AdsListScreen = ({ navigation }) => {
 	return (
 		<View style={styles.container}>
 			<View style={styles.contentContainer}>
-				<Text h4>All ads</Text>
+				<View
+					style={{ ...styles.containerRow, justifyContent: 'space-between' }}
+				>
+					<Text h4>All ads</Text>
+					<TouchableOpacity onPress={() => setSearchVisible(true)}>
+						<Ionicons name="ios-search" size={30} color={colors.color} />
+					</TouchableOpacity>
+				</View>
+
 				<PickerModal
 					items={categories}
 					showAlphabeticalIndex
 					autoSort
 					onSelected={item => {
-						console.log(item);
+						startSearch(item, true);
 					}}
 					selectPlaceholderText="Pick a category"
 					searchPlaceholderText="Search a category"
 				/>
-				<SearchBar placeholder="Search for items" />
 
 				{state.adList == null ? <ActivityIndicator /> : renderList()}
 			</View>
@@ -82,10 +143,4 @@ const AdsListScreen = ({ navigation }) => {
 	);
 };
 
-// const styles = StyleSheet.create({});
-AdsListScreen.navigationOptions = nav => {
-	return {
-		headerShown: false
-	};
-};
 export default AdsListScreen;

@@ -18,7 +18,7 @@ export const officalStyles = StyleSheet.create({
 		flex: 1,
 		marginTop: 40,
 		marginHorizontal: 15,
-		marginBottom: 40
+		marginBottom: 20
 	},
 	cardContainer: {
 		flex: 1,
@@ -65,7 +65,7 @@ export const styles = {
 			fontFamily: 'dosis-bold',
 			fontSize: 28,
 			color: colors.color,
-			marginBottom: 25,
+			marginBottom: 0,
 			textAlign: 'center'
 		},
 		style: {
