@@ -23,7 +23,7 @@ const TabsStack = createBottomTabNavigator();
 
 const AdDetailComponent = () => {
 	return (
-		<AdDetailStack.Navigator>
+		<AdDetailStack.Navigator headerMode="none">
 			<AdDetailStack.Screen name="Ad" component={AdsDetailScreen} />
 			<AdDetailStack.Screen
 				name="AdContact"
@@ -36,13 +36,24 @@ const AdDetailComponent = () => {
 
 const AdListComponent = () => {
 	return (
-		<AdListStack.Navigator headerMode="none">
+		<AdListStack.Navigator headerMode="screen">
 			<AdListStack.Screen
 				name="AdsList"
 				component={AdsListScreen}
-				headerMode="none"
+				options={{
+					headerShown: false
+				}}
 			/>
-			<AdListStack.Screen name="AdsDetail" component={AdDetailComponent} />
+			<AdListStack.Screen
+				name="AdsDetail"
+				component={AdDetailComponent}
+				options={{
+					title: 'Details',
+					headerStyle: { backgroundColor: colors.color },
+					headerTintColor: colors.backgroundColor,
+					headerBackTitle: 'Back to all ads'
+				}}
+			/>
 		</AdListStack.Navigator>
 	);
 };
