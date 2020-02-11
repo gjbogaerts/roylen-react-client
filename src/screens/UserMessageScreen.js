@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useCallback } from 'react';
 import { View, FlatList, StyleSheet, AsyncStorage } from 'react-native';
 import {
 	ListItem,
@@ -7,21 +7,39 @@ import {
 	Avatar,
 	Overlay
 } from 'react-native-elements';
+import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { Context as MessageContext } from '../context/MessageContext';
 import { styles, colors } from '../styles/styles';
 import { getBaseUrl } from '../api/axios';
 import ContactForm from '../components/ContactForm';
+import Message from '../models/Message';
 
 const UserMessageScreen = ({ router, navigation }) => {
-	const { state, markRead } = useContext(MessageContext);
-	// const [messageCount, setMessageCount] = useState(state.countMessage);
-	// console.log('rendering');
+	const { state, markRead, sendMessage, cleanUpMessage } = useContext(
+		MessageContext
+	);
 	const [user, setUser] = useState(null);
 	const [modalShow, setModalShow] = useState(false);
 	const [replyTo, setReplyTo] = useState(null);
 	const [currentAd, setCurrentAd] = useState(null);
 	const [addressee, setAddressee] = useState(null);
+	const [currentAdTitle, setCurrentAdTitle] = useState('');
+
+	useFocusEffect(
+		useCallback(() => {
+			// do something when the screen is focused
+			return () => {
+				//do something when the screen is unfocused.
+				setModalShow(false);
+				setReplyTo(null);
+				setCurrentAd(null);
+				setAddressee(null);
+				setCurrentAdTitle('');
+				cleanUpMessage();
+			};
+		}, [])
+	);
 
 	useEffect(() => {
 		const fetchUserData = async () => {
@@ -30,11 +48,11 @@ const UserMessageScreen = ({ router, navigation }) => {
 			setUser(u);
 		};
 		fetchUserData();
-		// setMessageCount(state.countMessage);
 	}, []);
 
-	const sendMessage = (from, to, re, msg) => {
-		console.log(from, to, re, msg);
+	const passMessage = (userScreenName, msge, from, to, re, currentAdTitle) => {
+		const msg = new Message(userScreenName, msge, from, to, re, currentAdTitle);
+		sendMessage(msg);
 	};
 
 	const renderList = item => {
@@ -75,20 +93,27 @@ const UserMessageScreen = ({ router, navigation }) => {
 		);
 		const buttons = [{ element: markAsRead }, { element: reply }];
 		const updateIndex = idx => {
+			// console.log(item);
 			switch (idx) {
 				case 0:
 					markRead(item._id);
 					break;
 				case 1:
-					replyToSender(item.fromId._id, item._id, item.fromId.screenName);
+					replyToSender(
+						item.fromId._id,
+						item._id,
+						item.fromId.screenName,
+						item.adTitle
+					);
 					break;
 			}
 		};
 
-		const replyToSender = (creatorId, itemId, screenName) => {
+		const replyToSender = (creatorId, itemId, screenName, title) => {
 			setReplyTo(creatorId);
 			setCurrentAd(itemId);
 			setAddressee(screenName);
+			setCurrentAdTitle(title);
 			setModalShow(true);
 		};
 
@@ -133,14 +158,24 @@ const UserMessageScreen = ({ router, navigation }) => {
 						borderRadius={15}
 					>
 						<View>
-							<ContactForm
-								// from={user._id}
-								//  to={replyTo}
-								// re={currentAd}
-								receiverName={addressee}
-								closeForm={() => setModalShow(false)}
-								sendMsg={msg => sendMessage(msg, user._id, replyTo, currentAd)}
-							/>
+							{!state.message && !state.errorMessage ? (
+								<ContactForm
+									receiverName={addressee}
+									closeForm={() => setModalShow(false)}
+									sendMsg={msg =>
+										passMessage(
+											user.screenName,
+											msg,
+											user._id,
+											replyTo,
+											currentAd,
+											currentAdTitle
+										)
+									}
+								/>
+							) : (
+								<Text>{state.message || state.errorMessage}</Text>
+							)}
 						</View>
 					</Overlay>
 				) : null}
