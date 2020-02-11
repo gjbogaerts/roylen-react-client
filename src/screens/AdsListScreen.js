@@ -81,7 +81,13 @@ const AdsListScreen = ({ navigation }) => {
 						</>
 					</Overlay>
 					{showSearchResult ? (
-						<Button title="Show all ads" onPress={() => getAllAds()} />
+						<Button
+							title="Show all ads"
+							onPress={() => {
+								setShowSearchResult(false);
+								getAllAds();
+							}}
+						/>
 					) : null}
 					<FlatList
 						data={state.adList}
