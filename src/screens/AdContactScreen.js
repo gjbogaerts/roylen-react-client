@@ -33,6 +33,8 @@ const AdContactScreen = ({ route, navigation }) => {
 			// do something when the screen is focused
 			return () => {
 				//do something when the screen is unfocused.
+				setMessage('');
+				setName('');
 				cleanUpMessage();
 			};
 		}, [])

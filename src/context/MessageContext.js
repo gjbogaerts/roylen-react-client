@@ -12,6 +12,14 @@ const messageReducer = (state, action) => {
 				received: action.payload,
 				countMessage: action.payload.length
 			};
+		case 'markread':
+			return {
+				...state,
+				countMessage: state.countMessage - 1,
+				received: state.received.filter(msg => {
+					return msg._id !== action.payload;
+				})
+			};
 
 		case 'messageSent':
 			return {
@@ -37,10 +45,8 @@ const messageReducer = (state, action) => {
 };
 
 const readMessage = dispatch => async () => {
-	// console.log('called readMessage');
 	const userData = await AsyncStorage.getItem('userData');
 	if (!userData) {
-		// console.log('no userdata');
 		return;
 	}
 	const user = JSON.parse(userData);
@@ -52,11 +58,9 @@ const readMessage = dispatch => async () => {
 			type: 'readMessage',
 			payload: response.data
 		});
-		// console.log(response.data);
 	} catch (err) {
 		handleError(dispatch, 'Could not retrieve your messages');
 	}
-	// console.log('start message count');
 };
 
 const sendMessage = dispatch => async msg => {
@@ -81,6 +85,18 @@ const cleanUpMessage = dispatch => () => {
 	});
 };
 
+const markRead = dispatch => async messageId => {
+	const response = await axios.post('/api/message/markRead', { messageId });
+	if (response.status === 200) {
+		dispatch({
+			type: 'markread',
+			payload: messageId
+		});
+	} else {
+		handleError(dispatch, response.data);
+	}
+};
+
 const handleError = (dispatch, errMsg) => {
 	dispatch({
 		type: 'error',
@@ -89,6 +105,6 @@ const handleError = (dispatch, errMsg) => {
 };
 export const { Provider, Context } = createDataContext(
 	messageReducer,
-	{ sendMessage, readMessage, cleanUpMessage },
+	{ sendMessage, readMessage, cleanUpMessage, markRead },
 	{ message: null, errorMessage: '', countMessage: 0, received: [] }
 );

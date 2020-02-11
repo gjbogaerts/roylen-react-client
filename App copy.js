@@ -1,3 +1,7 @@
+/*
+
+React navigation 4...
+*/
 import React, { useState } from 'react';
 import { View } from 'react-native';
 import { AppLoading } from 'expo';

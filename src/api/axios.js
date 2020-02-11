@@ -8,6 +8,7 @@ if (!Constants.isDevice) {
 } else {
 	baseUrl = 'https://api.roylen.ga';
 }
+// console.log(baseUrl);
 // baseUrl = 'https://api.roylen.ga';
 const instance = axios.create({
 	baseURL: baseUrl

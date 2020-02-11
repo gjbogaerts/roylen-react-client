@@ -5,7 +5,7 @@ import { Context as MessageContext } from '../context/MessageContext';
 const UserAuthControlScreen = props => {
 	const { tryLocalSignin } = useContext(AuthContext);
 	const msgState = useContext(MessageContext);
-	console.log(msgState);
+	// console.log(msgState);
 	useEffect(() => {
 		tryLocalSignin(msgState);
 	}, []);

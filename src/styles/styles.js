@@ -31,10 +31,14 @@ export const officalStyles = StyleSheet.create({
 		marginVertical: 15
 	},
 	containerRow: {
-		flexDirection: 'row'
+		flexDirection: 'row',
+		justifyContent: 'space-around',
+		alignItems: 'center'
 	},
 	containerCol: {
-		flexDirection: 'column'
+		flexDirection: 'column',
+		justifyContent: 'space-between',
+		alignItems: 'center'
 	},
 	caption: {
 		fontSize: 14

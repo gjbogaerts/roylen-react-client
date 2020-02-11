@@ -21,7 +21,7 @@ const AdsListScreen = ({ navigation }) => {
 		const getAds = async () => {
 			await getAllAds();
 		};
-		console.log(msgContext.state.countMessage);
+		// console.log(msgContext.state.countMessage);
 		getAds();
 	}, []);
 
