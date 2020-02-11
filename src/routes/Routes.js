@@ -51,7 +51,15 @@ const AdListComponent = () => {
 					title: 'Details',
 					headerStyle: { backgroundColor: colors.color },
 					headerTintColor: colors.backgroundColor,
-					headerBackTitle: 'Back to all ads'
+					headerBackTitle: 'Back to all ads',
+					headerTitleStyle: {
+						fontFamily: 'dosis-bold',
+						fontSize: 28
+					},
+					headerBackTitleStyle: {
+						fontFamily: 'dosis-regular',
+						fontSize: 14
+					}
 				}}
 			/>
 		</AdListStack.Navigator>
@@ -73,7 +81,11 @@ const TabComponent = () => {
 				inactiveTintColor: colors.backgroundColor,
 				inactiveBackgroundColor: colors.color,
 				activeTintColor: colors.color,
-				activeBackgroundColor: colors.backgroundColor
+				activeBackgroundColor: colors.backgroundColor,
+				labelStyle: {
+					fontFamily: 'dosis',
+					fontSize: 14
+				}
 			}}
 		>
 			<TabsStack.Screen
