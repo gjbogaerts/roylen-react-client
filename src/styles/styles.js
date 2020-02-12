@@ -90,7 +90,7 @@ export const styles = {
 			fontFamily: 'dosis'
 		},
 		inputContainerStyle: {
-			paddingTop: 20
+			paddingTop: 0
 		}
 	},
 	Button: {

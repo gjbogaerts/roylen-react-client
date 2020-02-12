@@ -14,7 +14,9 @@ const AuthForm = ({
 	navigationLabel,
 	navigationLink,
 	showSignUp,
-	getMessageCount
+	getMessageCount,
+	showForgotPassword,
+	showForgotPasswordPressed
 }) => {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
@@ -69,6 +71,13 @@ const AuthForm = ({
 			<TouchableOpacity onPress={() => navigation.navigate(navigationLink)}>
 				<Text>{navigationLabel}</Text>
 			</TouchableOpacity>
+			{showForgotPassword ? (
+				<View>
+					<TouchableOpacity onPress={showForgotPasswordPressed}>
+						<Text>I forgot my password</Text>
+					</TouchableOpacity>
+				</View>
+			) : null}
 		</View>
 	);
 };

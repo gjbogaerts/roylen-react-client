@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
 import { View, Alert } from 'react-native';
+import { Text } from 'react-native-elements';
 import { styles } from '../styles/styles';
 import AuthForm from '../components/AuthForm';
 import { Context as AuthContext } from '../context/AuthContext';
@@ -18,19 +19,34 @@ const UserLoginScreen = props => {
 		);
 	};
 
+	const sendForgottenPasswordLink = () => {
+		props.navigation.navigate('ResetPassword');
+	};
+
 	return (
-		<View style={styles.contentContainer}>
-			<AuthForm
-				showSignUp={false}
-				title="Log in"
-				buttonTitle="Sign in to Roylen"
-				onSubmit={signin}
-				getMessageCount={readMessage}
-				navigation={props.navigation}
-				navigationLabel="No account yet? You can sign up here"
-				navigationLink="Signup"
-			/>
-			{state.errorMessage ? showAlert() : null}
+		<View style={styles.container}>
+			<View style={styles.contentContainer}>
+				{state.flashMessage ? (
+					<View>
+						<Text>{state.flashMessage}</Text>
+					</View>
+				) : null}
+				<AuthForm
+					showSignUp={false}
+					title="Log in"
+					buttonTitle="Sign in to Roylen"
+					onSubmit={signin}
+					getMessageCount={readMessage}
+					navigation={props.navigation}
+					navigationLabel="No account yet? You can sign up here"
+					navigationLink="Signup"
+					showForgotPassword
+					showForgotPasswordPressed={sendForgottenPasswordLink}
+				/>
+				{state.errorMessage && props.navigation.isFocused()
+					? showAlert()
+					: null}
+			</View>
 		</View>
 	);
 };

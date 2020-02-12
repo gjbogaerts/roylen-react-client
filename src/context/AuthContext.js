@@ -11,6 +11,7 @@ const authReducer = (state, action) => {
 			return {
 				...state,
 				errorMessage: action.payload,
+				flashMessage: '',
 				error: true
 			};
 		case 'auth':
@@ -20,6 +21,23 @@ const authReducer = (state, action) => {
 				token: action.payload,
 				errorMessage: '',
 				error: false
+			};
+		case 'passwordReset': {
+			return {
+				...state,
+				flashMessage: action.payload,
+				token: null,
+				errorMessage: '',
+				error: false
+			};
+		}
+		case 'resetSend':
+			return {
+				...state,
+				error: false,
+				flashMessage: action.payload,
+				token: null,
+				errorMessage: ''
 			};
 		case 'sign_out':
 			return {
@@ -50,6 +68,52 @@ const authReducer = (state, action) => {
 
 const clearErrorMessage = dispatch => () => {
 	dispatch({ type: 'clear_error_message' });
+};
+
+const resetPassword = dispatch => async (key, pw) => {
+	try {
+		const response = await axios.post('/api/conformResetPassword', { key, pw });
+		if (response.data.success) {
+			console.log(response.data.doc);
+			dispatch({
+				type: 'passwordReset',
+				payload: response.data.msg
+			});
+			navigate('Login');
+		} else {
+			dispatch({
+				type: 'error',
+				payload: response.data.error
+			});
+		}
+	} catch (err) {
+		dispatch({ type: 'error', payload: response.data.error });
+	}
+};
+
+const sendResetPasswordEmail = dispatch => async email => {
+	try {
+		const response = await axios.post('/api/resetPassword', { email });
+		if (response.data.success) {
+			// console.log('yes!');
+			dispatch({
+				type: 'resetSend',
+				payload: response.data.msg
+			});
+		} else {
+			dispatch({
+				type: 'error',
+				payload: response.data.error
+			});
+		}
+		// console.log(response.data);
+	} catch (e) {
+		dispatch({
+			type: 'error',
+			payload: e.errorMessage
+		});
+	}
+	// console.log(email);
 };
 
 const signin = dispatch => async ({ email, password }, msgCallback) => {
@@ -176,7 +240,9 @@ export const { Provider, Context } = createDataContext(
 		signout,
 		signin,
 		tryLocalSignin,
-		updateProfileInfo
+		updateProfileInfo,
+		sendResetPasswordEmail,
+		resetPassword
 	},
-	{ token: null, error: false, errorMessage: '' }
+	{ token: null, error: false, errorMessage: '', flashMessage: '' }
 );

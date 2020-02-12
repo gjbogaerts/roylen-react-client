@@ -19,17 +19,19 @@ const UserSignupScreen = props => {
 	};
 
 	return (
-		<View style={styles.contentContainer}>
-			<AuthForm
-				showSignUp
-				title="Sign up"
-				buttonTitle="Sign up to Roylen"
-				onSubmit={signup}
-				navigation={props.navigation}
-				navigationLabel="Already have an account? You can log in here"
-				navigationLink="Login"
-			/>
-			{state.errorMessage ? showAlert() : null}
+		<View style={styles.container}>
+			<View style={styles.contentContainer}>
+				<AuthForm
+					showSignUp
+					title="Sign up"
+					buttonTitle="Sign up to Roylen"
+					onSubmit={signup}
+					navigation={props.navigation}
+					navigationLabel="Already have an account? You can log in here"
+					navigationLink="Login"
+				/>
+				{state.errorMessage ? showAlert() : null}
+			</View>
 		</View>
 	);
 };

@@ -143,10 +143,12 @@ const UserProfileScreen = ({ navigation }) => {
 	};
 
 	return (
-		<View style={styles.contentContainer}>
-			<Text h4>Your Profile</Text>
-			{user ? printUserData() : null}
-			<Button title="Log out" onPress={signout} />
+		<View style={styles.container}>
+			<View style={styles.contentContainer}>
+				<Text h4>Your Profile</Text>
+				{user ? printUserData() : null}
+				<Button title="Log out" onPress={signout} />
+			</View>
 		</View>
 	);
 };

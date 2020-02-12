@@ -11,6 +11,7 @@ import AdCreateScreen from '../screens/AdCreateScreen';
 import AdContactScreen from '../screens/AdContactScreen';
 import InfoScreen from '../screens/InfoScreen';
 import UserMessageScreen from '../screens/UserMessageScreen';
+import UserResetPasswordScreen from '../screens/UserResetPasswordScreen';
 import { Context as AuthContext } from '../context/AuthContext';
 import { Context as MessageContext } from '../context/MessageContext';
 import { Ionicons } from '@expo/vector-icons';
@@ -183,6 +184,10 @@ const AuthComponent = () => {
 		<AuthStack.Navigator headerMode="none">
 			<AuthStack.Screen name="Login" component={UserLoginScreen} />
 			<AuthStack.Screen name="Signup" component={UserSignupScreen} />
+			<AuthStack.Screen
+				name="ResetPassword"
+				component={UserResetPasswordScreen}
+			/>
 		</AuthStack.Navigator>
 	);
 };
