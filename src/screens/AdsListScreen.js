@@ -5,7 +5,14 @@ import {
 	ActivityIndicator,
 	TouchableOpacity
 } from 'react-native';
-import { Text, Overlay, ListItem, Button, Input } from 'react-native-elements';
+import {
+	Text,
+	Overlay,
+	ListItem,
+	Button,
+	Input,
+	Slider
+} from 'react-native-elements';
 import { styles, colors } from '../styles/styles';
 import { Context as AdContext } from '../context/AdContext';
 import PickerModal from 'react-native-picker-modal-view';
@@ -18,6 +25,8 @@ const AdsListScreen = ({ navigation }) => {
 	const [search, setSearch] = useState('');
 	const [searchVisible, setSearchVisible] = useState(false);
 	const [showSearchResult, setShowSearchResult] = useState(false);
+	const [filter, setFilter] = useState(0);
+	const [filteredAds, setFilteredAds] = useState([]);
 
 	useEffect(() => {
 		const getAds = async () => {
@@ -32,9 +41,33 @@ const AdsListScreen = ({ navigation }) => {
 		setShowSearchResult(true);
 	};
 
+	const implementFilter = val => {
+		setFilter(val);
+		let ads = state.adList;
+		switch (val) {
+			case 0:
+				setFilteredAds(state.adList);
+				break;
+
+			case 1:
+				ads = state.adList.filter(ad => {
+					return ad.adNature === 'offered';
+				});
+				setFilteredAds(ads);
+				break;
+			case 2:
+				ads = state.adList.filter(ad => {
+					return ad.adNature === 'wanted';
+				});
+				setFilteredAds(ads);
+				break;
+		}
+		// console.log(ads.length);
+	};
+
 	const renderList = () => {
 		if (state.adList.length === 0) {
-			return <Text>No ads placed yet.</Text>;
+			return <Text>No ads to show.</Text>;
 		} else {
 			return (
 				<View>
@@ -90,7 +123,9 @@ const AdsListScreen = ({ navigation }) => {
 						/>
 					) : null}
 					<FlatList
-						data={state.adList}
+						data={
+							filteredAds && filteredAds.length ? filteredAds : state.adList
+						}
 						keyExtractor={item => item._id}
 						renderItem={({ item }) => {
 							const tmpDescription = item.description.split(' ');
@@ -121,8 +156,8 @@ const AdsListScreen = ({ navigation }) => {
 	};
 
 	return (
-		<View style={styles.container}>
-			<View style={styles.contentContainer}>
+		<View style={{ ...styles.container, marginBottom: 160 }}>
+			<View style={{ ...styles.contentContainer }}>
 				<View
 					style={{ ...styles.containerRow, justifyContent: 'space-between' }}
 				>
@@ -142,7 +177,23 @@ const AdsListScreen = ({ navigation }) => {
 					selectPlaceholderText="Pick a category"
 					searchPlaceholderText="Search a category"
 				/>
-
+				<View
+					style={{ ...styles.containerRow, justifyContent: 'space-between' }}
+				>
+					<Text style={{ fontSize: 14 }}>Show all</Text>
+					<Text style={{ fontSize: 14 }}>Show offered</Text>
+					<Text style={{ fontSize: 14 }}>Show wanted</Text>
+				</View>
+				<Slider
+					style={{ position: 'relative', top: -10 }}
+					minimumValue={0}
+					maximumValue={2}
+					step={1}
+					thumbTintColor={colors.color}
+					minimumTrackTintColor={colors.color}
+					value={filter}
+					onSlidingComplete={implementFilter}
+				/>
 				{state.adList == null ? <ActivityIndicator /> : renderList()}
 			</View>
 		</View>
