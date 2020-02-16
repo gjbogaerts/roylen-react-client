@@ -23,9 +23,23 @@ const adReducer = (state, action) => {
 				adList: [],
 				errorMessage: ''
 			};
+		case 'getUserAds':
+			return {
+				...state,
+				message: '',
+				userAds: action.payload
+			};
+		case 'deleteAd':
+			return {
+				...state,
+				message: 'Your ad has been deleted',
+				userAds: state.userAds.filter(ad => ad._id !== action.payload),
+				adList: state.adList.filter(ad => ad._id !== action.payload)
+			};
 		case 'error':
 			return {
 				...state,
+				message: '',
 				errorMessage: action.payload
 			};
 		default:
@@ -43,7 +57,7 @@ const getAllAds = dispatch => async () => {
 	} catch (err) {
 		dispatch({
 			type: 'error',
-			payload: 'Could not retrieve ads'
+			payload: err.errorMessage
 		});
 	}
 };
@@ -64,7 +78,7 @@ const getSpecAds = dispatch => async (q, inCat) => {
 	} catch (err) {
 		dispatch({
 			type: 'error',
-			payload: response.data
+			payload: err.errorMessage
 		});
 	}
 };
@@ -80,7 +94,7 @@ const getAd = dispatch => async (adId, adTitle) => {
 	} catch (err) {
 		dispatch({
 			type: 'error',
-			payload: 'Could not retrieve ad'
+			payload: err.errorMessage
 		});
 	}
 };
@@ -123,12 +137,64 @@ const placeAd = dispatch => async adObj => {
 		});
 		navigate('AdsList');
 	} catch (err) {
-		console.log(err);
+		dispatch({
+			type: 'error',
+			payload: err.errorMessage
+		});
+	}
+};
+
+const deleteAd = dispatch => async (itemId, userId) => {
+	try {
+		const response = await axios.delete('/api/ads', {
+			data: {
+				id: itemId,
+				creator: userId
+			}
+		});
+		if (response.data == 1) {
+			dispatch({
+				type: 'deleteAd',
+				payload: itemId
+			});
+		} else {
+			dispatch({
+				type: 'error',
+				payload: 'Unable to delete this ad'
+			});
+		}
+	} catch (err) {
+		dispatch({
+			type: 'error',
+			payload: err.errorMessage
+		});
+	}
+};
+
+const getUserAds = dispatch => async userId => {
+	try {
+		const response = await axios.get(`/api/ads/fromUser/${userId}`);
+		dispatch({
+			type: 'getUserAds',
+			payload: response.data
+		});
+		return response.data;
+	} catch (err) {
+		dispatch({
+			type: 'error',
+			payload: err.errorMessage
+		});
 	}
 };
 
 export const { Provider, Context } = createDataContext(
 	adReducer,
-	{ getAllAds, getAd, placeAd, getSpecAds },
-	{ adList: null, currentAd: null, errorMessage: '' }
+	{ getAllAds, getAd, placeAd, getSpecAds, deleteAd, getUserAds },
+	{
+		adList: null,
+		currentAd: null,
+		errorMessage: '',
+		userAds: null,
+		message: ''
+	}
 );

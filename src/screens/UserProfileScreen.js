@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState, Fragment } from 'react';
 import * as ImagePicker from 'expo-image-picker';
 import {
 	View,
+	ScrollView,
 	StyleSheet,
 	AsyncStorage,
 	Alert,
@@ -16,16 +17,21 @@ import {
 	Avatar
 } from 'react-native-elements';
 import { styles, colors } from '../styles/styles';
-import { getBaseUrl } from '../api/axios';
+import axios, { getBaseUrl } from '../api/axios';
 import { Context as AuthContext } from '../context/AuthContext';
+import { Context as AdContext } from '../context/AdContext';
 import Spacer from '../components/UI/Spacer';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import MyOverlay from '../components/UI/MyOverlay';
+import Ads from '../components/Ads';
 
 const UserProfileScreen = ({ navigation }) => {
 	const { signout, updateProfileInfo } = useContext(AuthContext);
+	const { state, getUserAds, deleteAd } = useContext(AdContext);
 	const [user, setUser] = useState(null);
 	const [email, setEmail] = useState('');
 	const [profilePic, setProfilePic] = useState('');
+	const [adsVisible, setAdsVisible] = useState(false);
+	const [myAds, setMyAds] = useState([]);
 
 	useEffect(() => {
 		const fetchUserData = async () => {
@@ -36,6 +42,12 @@ const UserProfileScreen = ({ navigation }) => {
 		};
 		fetchUserData();
 	}, []);
+
+	const showUserAds = async () => {
+		const userAds = await getUserAds(user._id);
+		setMyAds(userAds);
+		setAdsVisible(true);
+	};
 
 	const handleProfileChange = () => {
 		updateProfileInfo(email, profilePic);
@@ -97,29 +109,25 @@ const UserProfileScreen = ({ navigation }) => {
 
 		return (
 			<Fragment>
-				<View style={styles.containerRow}>
-					<View style={localStyles.avatar}>
-						<Avatar
-							source={{ uri: getBaseUrl() + user.avatar }}
-							size="medium"
-							rounded
-							PlaceholderContent={<ActivityIndicator />}
-						/>
-					</View>
-					<View style={{ ...styles.containerCol, ...localStyles.profileInfo }}>
-						<Text>Your screen name is {user.screenName}.</Text>
-						<Text>Your current credit is {user.nix} nix.</Text>
-						<TouchableOpacity
-							onPress={() =>
-								navigation.navigate('AdsList', { userId: user._id })
-							}
-						>
-							<Text>You can view your current ads here</Text>
-						</TouchableOpacity>
-					</View>
-				</View>
 				<View style={styles.cardContainer}>
-					<Card title="Change email or profile pic">
+					<Card>
+						<View style={styles.containerRow}>
+							<View style={localStyles.avatar}>
+								<Avatar
+									source={{ uri: getBaseUrl() + user.avatar }}
+									size="medium"
+									rounded
+									PlaceholderContent={<ActivityIndicator />}
+								/>
+							</View>
+							<View style={localStyles.profileInfo}>
+								<Text>Screen name: {user.screenName}.</Text>
+								<Text>Current credit: {user.nix} nix.</Text>
+							</View>
+						</View>
+
+						<Spacer />
+						<Spacer />
 						<Input
 							label="Your email address"
 							keyboardType="email-address"
@@ -127,7 +135,6 @@ const UserProfileScreen = ({ navigation }) => {
 							value={email}
 							onChangeText={val => setEmail(val)}
 						/>
-						<Spacer />
 						<Text style={{ marginLeft: 10 }}>
 							Choose a profile picture from:
 						</Text>
@@ -143,13 +150,27 @@ const UserProfileScreen = ({ navigation }) => {
 	};
 
 	return (
-		<View style={styles.container}>
+		<ScrollView style={styles.container}>
+			<MyOverlay
+				isVisible={adsVisible}
+				onBackdropPress={() => setAdsVisible(false)}
+			>
+				<Ads
+					ads={myAds}
+					message={state.message}
+					onDeletePressed={item => {
+						deleteAd(item._id, user._id);
+					}}
+				/>
+			</MyOverlay>
 			<View style={styles.contentContainer}>
 				<Text h4>Your Profile</Text>
 				{user ? printUserData() : null}
+
+				<Button title="See your current ads" onPress={showUserAds} />
 				<Button title="Log out" onPress={signout} />
 			</View>
-		</View>
+		</ScrollView>
 	);
 };
 
