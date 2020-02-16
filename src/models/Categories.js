@@ -1,4 +1,5 @@
 export default [
+	{ Name: 'No Category', Value: '' },
 	{ Name: 'Interior', Value: 'interior' },
 	{ Name: 'Babyrooms', Value: 'babyrooms' },
 	{ Name: 'Bedlinnen', Value: 'bedlinnen' },

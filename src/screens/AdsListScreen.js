@@ -24,6 +24,7 @@ const AdsListScreen = ({ navigation }) => {
 	const { state, getAllAds, getAd, getSpecAds } = useContext(AdContext);
 	const [search, setSearch] = useState('');
 	const [searchVisible, setSearchVisible] = useState(false);
+	const [filterVisible, setFilterVisible] = useState(false);
 	const [showSearchResult, setShowSearchResult] = useState(false);
 	const [filter, setFilter] = useState(0);
 	const [filteredAds, setFilteredAds] = useState([]);
@@ -32,17 +33,20 @@ const AdsListScreen = ({ navigation }) => {
 		const getAds = async () => {
 			await getAllAds();
 		};
+		setSearch('');
+		setFilter(0);
 		getAds();
-	}, []);
+	}, [filteredAds]);
 
 	const startSearch = (itemToSearch, inCategory) => {
 		setSearchVisible(false);
-		getSpecAds(itemToSearch, inCategory);
 		setShowSearchResult(true);
+		getSpecAds(itemToSearch, inCategory);
 	};
 
 	const implementFilter = val => {
 		setFilter(val);
+		setFilterVisible(false);
 		let ads = state.adList;
 		switch (val) {
 			case 0:
@@ -65,12 +69,72 @@ const AdsListScreen = ({ navigation }) => {
 		// console.log(ads.length);
 	};
 
+	const renderGetAllAdsButton = () => {
+		return (
+			<Button
+				title="Show all ads"
+				onPress={() => {
+					setShowSearchResult(false);
+					setFilter(0);
+					getAllAds();
+				}}
+			/>
+		);
+	};
+
 	const renderList = () => {
 		if (state.adList.length === 0) {
-			return <Text>No ads to show.</Text>;
+			return (
+				<>
+					<Text>No ads to show.</Text>
+					{renderGetAllAdsButton()}
+				</>
+			);
 		} else {
 			return (
 				<View>
+					<Overlay
+						isVisible={filterVisible}
+						onBackdropPress={() => setFilterVisible(false)}
+						borderRadius={15}
+						height={200}
+					>
+						<>
+							<PickerModal
+								items={categories}
+								showAlphabeticalIndex
+								autoSort
+								onSelected={item => {
+									startSearch(item, true);
+									setFilterVisible(false);
+									setFilter(0);
+									setSearch('');
+								}}
+								selectPlaceholderText="Pick a category"
+								searchPlaceholderText="Search a category"
+							/>
+							<View
+								style={{
+									...styles.containerRow,
+									justifyContent: 'space-between'
+								}}
+							>
+								<Text style={{ fontSize: 14 }}>Show all</Text>
+								<Text style={{ fontSize: 14 }}>Show offered</Text>
+								<Text style={{ fontSize: 14 }}>Show wanted</Text>
+							</View>
+							<Slider
+								style={{ position: 'relative', top: -10 }}
+								minimumValue={0}
+								maximumValue={2}
+								step={1}
+								thumbTintColor={colors.color}
+								minimumTrackTintColor={colors.color}
+								value={filter}
+								onSlidingComplete={implementFilter}
+							/>
+						</>
+					</Overlay>
 					<Overlay
 						isVisible={searchVisible}
 						onBackdropPress={() => setSearchVisible(false)}
@@ -113,15 +177,7 @@ const AdsListScreen = ({ navigation }) => {
 							</View>
 						</>
 					</Overlay>
-					{showSearchResult ? (
-						<Button
-							title="Show all ads"
-							onPress={() => {
-								setShowSearchResult(false);
-								getAllAds();
-							}}
-						/>
-					) : null}
+					{showSearchResult ? renderGetAllAdsButton() : null}
 					<FlatList
 						data={
 							filteredAds && filteredAds.length ? filteredAds : state.adList
@@ -141,7 +197,7 @@ const AdsListScreen = ({ navigation }) => {
 										leftAvatar={{
 											source: { uri: getBaseUrl() + item.pics[0] }
 										}}
-										rightSubtitle={description}
+										rightSubtitle={item.category + ': ' + description}
 										bottomDivider
 										chevron
 										subtitle={item.creator.screenName}
@@ -156,7 +212,7 @@ const AdsListScreen = ({ navigation }) => {
 	};
 
 	return (
-		<View style={{ ...styles.container, marginBottom: 160 }}>
+		<View style={{ ...styles.container, marginBottom: 0 }}>
 			<View style={{ ...styles.contentContainer }}>
 				<View
 					style={{ ...styles.containerRow, justifyContent: 'space-between' }}
@@ -165,35 +221,11 @@ const AdsListScreen = ({ navigation }) => {
 					<TouchableOpacity onPress={() => setSearchVisible(true)}>
 						<Ionicons name="ios-search" size={30} color={colors.color} />
 					</TouchableOpacity>
+					<TouchableOpacity onPress={() => setFilterVisible(true)}>
+						<Ionicons name="ios-funnel" size={30} color={colors.color} />
+					</TouchableOpacity>
 				</View>
 
-				<PickerModal
-					items={categories}
-					showAlphabeticalIndex
-					autoSort
-					onSelected={item => {
-						startSearch(item, true);
-					}}
-					selectPlaceholderText="Pick a category"
-					searchPlaceholderText="Search a category"
-				/>
-				<View
-					style={{ ...styles.containerRow, justifyContent: 'space-between' }}
-				>
-					<Text style={{ fontSize: 14 }}>Show all</Text>
-					<Text style={{ fontSize: 14 }}>Show offered</Text>
-					<Text style={{ fontSize: 14 }}>Show wanted</Text>
-				</View>
-				<Slider
-					style={{ position: 'relative', top: -10 }}
-					minimumValue={0}
-					maximumValue={2}
-					step={1}
-					thumbTintColor={colors.color}
-					minimumTrackTintColor={colors.color}
-					value={filter}
-					onSlidingComplete={implementFilter}
-				/>
 				{state.adList == null ? <ActivityIndicator /> : renderList()}
 			</View>
 		</View>
