@@ -15,7 +15,10 @@ const fetchFonts = () => {
 	return Font.loadAsync({
 		dosis: require('./assets/fonts/Dosis-Medium.otf'),
 		'dosis-bold': require('./assets/fonts/Dosis-Bold.otf'),
-		'dosis-regular': require('./assets/fonts/Dosis-Regular.otf')
+		'dosis-regular': require('./assets/fonts/Dosis-Regular.otf'),
+		patrick: require('./assets/fonts/PatrickHansSC-Regular.ttf'),
+		quicksand: require('./assets/fonts/Quicksand-Regular.ttf'),
+		'quicksand-bold': require('./assets/fonts/Quicksand-Bold.ttf')
 	});
 };
 
