@@ -97,6 +97,27 @@ const markRead = dispatch => async messageId => {
 	}
 };
 
+const sendToRoylen = dispatch => async (msg, email) => {
+	try {
+		const response = await axios.post('/api/message/contact', { msg, email });
+		if (response.status === 200) {
+			dispatch({
+				type: 'messageSent'
+			});
+		} else {
+			dispatch({
+				type: 'error',
+				payload: response.data
+			});
+		}
+	} catch (err) {
+		dispatch({
+			type: 'error',
+			payload: err
+		});
+	}
+};
+
 const handleError = (dispatch, errMsg) => {
 	dispatch({
 		type: 'error',
@@ -105,6 +126,6 @@ const handleError = (dispatch, errMsg) => {
 };
 export const { Provider, Context } = createDataContext(
 	messageReducer,
-	{ sendMessage, readMessage, cleanUpMessage, markRead },
+	{ sendMessage, readMessage, cleanUpMessage, markRead, sendToRoylen },
 	{ message: null, errorMessage: '', countMessage: 0, received: [] }
 );
