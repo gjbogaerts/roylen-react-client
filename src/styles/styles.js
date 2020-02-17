@@ -67,7 +67,7 @@ export const styles = {
 	...officalStyles,
 	Text: {
 		h4Style: {
-			fontFamily: 'dosis-bold',
+			fontFamily: 'quicksand-bold',
 			fontSize: 28,
 			color: colors.color,
 			marginBottom: 0,
@@ -108,7 +108,8 @@ export const styles = {
 	},
 	Card: {
 		titleStyle: {
-			color: colors.color
+			color: colors.color,
+			fontFamily: 'quicksand'
 		},
 		containerStyle: {
 			borderRadius: 15,
