@@ -15,6 +15,7 @@ import categories from '../models/Categories';
 import PickerModal from 'react-native-picker-modal-view';
 import Ad from '../models/Ad';
 import { Context as AdContext } from '../context/AdContext';
+import useAuthInfo from '../hooks/useAuthInfo';
 
 const AdCreateScreen = props => {
 	const [category, setCategory] = useState(null);
@@ -22,19 +23,10 @@ const AdCreateScreen = props => {
 	const [description, setDescription] = useState('');
 	const [virtualPrice, setVirtualPrice] = useState('');
 	const [pics, setPics] = useState(null);
-	const [user, setUser] = useState(null);
 	const [wanted, setWanted] = useState(false);
 
 	const { placeAd } = useContext(AdContext);
-
-	useEffect(() => {
-		const fetchUser = async () => {
-			const userData = await AsyncStorage.getItem('userData');
-			const u = JSON.parse(userData);
-			setUser(u);
-		};
-		fetchUser();
-	}, []);
+	const user = useAuthInfo();
 
 	const selectCamera = <Text>Camera</Text>;
 	const selectCameraRoll = <Text>Photo Library</Text>;
