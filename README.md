@@ -5,3 +5,7 @@ App for the exchange of children's toys and clothing. Made with love for the pla
 ## moved to another git repo
 
 Moved to bitbucket for easier integration with bug tracking tools.
+
+## and moved back
+
+Because github is more user friendly...
