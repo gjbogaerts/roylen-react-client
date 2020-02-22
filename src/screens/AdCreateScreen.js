@@ -1,5 +1,5 @@
-import React, { useState, useContext, useEffect } from 'react';
-import { View, AsyncStorage, ScrollView } from 'react-native';
+import React, { useState, useContext } from 'react';
+import { View, ScrollView } from 'react-native';
 import {
 	Text,
 	Input,
@@ -7,17 +7,18 @@ import {
 	Button,
 	ButtonGroup,
 	CheckBox,
-	Tooltip
+	Tooltip,
+	Alert
 } from 'react-native-elements';
 import * as ImagePicker from 'expo-image-picker';
-import { styles, colors } from '../styles/styles';
+import { styles } from '../styles/styles';
 import categories from '../models/Categories';
 import PickerModal from 'react-native-picker-modal-view';
 import Ad from '../models/Ad';
 import { Context as AdContext } from '../context/AdContext';
 import useAuthInfo from '../hooks/useAuthInfo';
 
-const AdCreateScreen = props => {
+const AdCreateScreen = () => {
 	const [category, setCategory] = useState(null);
 	const [title, setTitle] = useState('');
 	const [description, setDescription] = useState('');
@@ -114,8 +115,8 @@ const AdCreateScreen = props => {
 									popover={
 										<Text style={styles.tooltipTextStyle}>
 											If you check this box, you will place an ad in the
-											'wanted' category. Uncheck it to get your item in the
-											'offered' category.
+											&lsquo;wanted&rsquo; category. Uncheck it to get your item
+											in the &lsquo;offered&rsquo; category.
 										</Text>
 									}
 									height={100}

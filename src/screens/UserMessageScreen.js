@@ -15,7 +15,7 @@ import { getBaseUrl } from '../api/axios';
 import ContactForm from '../components/ContactForm';
 import Message from '../models/Message';
 
-const UserMessageScreen = ({ router, navigation }) => {
+const UserMessageScreen = () => {
 	const { state, markRead, sendMessage, cleanUpMessage } = useContext(
 		MessageContext
 	);
@@ -38,7 +38,7 @@ const UserMessageScreen = ({ router, navigation }) => {
 				setCurrentAdTitle('');
 				cleanUpMessage();
 			};
-		}, [])
+		}, [cleanUpMessage])
 	);
 
 	useEffect(() => {

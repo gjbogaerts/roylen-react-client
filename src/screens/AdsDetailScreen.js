@@ -8,7 +8,7 @@ import { getBaseUrl } from '../api/axios';
 import { Ionicons } from '@expo/vector-icons';
 // import GallerySwiper from 'react-native-gallery-swiper';
 
-const AdsDetailScreen = ({ route, navigation }) => {
+const AdsDetailScreen = ({ navigation }) => {
 	const { state } = useContext(AdContext);
 	const [alert, setAlert] = useState('');
 
@@ -103,7 +103,7 @@ const AdsDetailScreen = ({ route, navigation }) => {
 	);
 };
 
-AdsDetailScreen.navigationOptions = nav => {
+AdsDetailScreen.navigationOptions = () => {
 	return {
 		headerShown: true
 	};

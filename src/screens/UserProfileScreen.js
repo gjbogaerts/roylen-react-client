@@ -16,15 +16,15 @@ import {
 	ButtonGroup,
 	Avatar
 } from 'react-native-elements';
-import { styles, colors } from '../styles/styles';
-import axios, { getBaseUrl } from '../api/axios';
+import { styles } from '../styles/styles';
+import { getBaseUrl } from '../api/axios';
 import { Context as AuthContext } from '../context/AuthContext';
 import { Context as AdContext } from '../context/AdContext';
 import Spacer from '../components/UI/Spacer';
 import MyOverlay from '../components/UI/MyOverlay';
 import Ads from '../components/Ads';
 
-const UserProfileScreen = ({ navigation }) => {
+const UserProfileScreen = () => {
 	const { signout, updateProfileInfo } = useContext(AuthContext);
 	const { state, getUserAds, deleteAd } = useContext(AdContext);
 	const [user, setUser] = useState(null);

@@ -74,8 +74,9 @@ const clearErrorMessage = dispatch => () => {
 };
 
 const resetPassword = dispatch => async (key, pw) => {
+	let response = null;
 	try {
-		const response = await axios.post('/api/conformResetPassword', { key, pw });
+		response = await axios.post('/api/conformResetPassword', { key, pw });
 		if (response.data.success) {
 			// console.log(response.data.doc);
 			dispatch({
