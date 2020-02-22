@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { View, ScrollView } from 'react-native';
 import {
 	Text,
@@ -11,6 +11,7 @@ import {
 	Alert
 } from 'react-native-elements';
 import * as ImagePicker from 'expo-image-picker';
+import * as Location from 'expo-location';
 import { styles } from '../styles/styles';
 import categories from '../models/Categories';
 import PickerModal from 'react-native-picker-modal-view';
@@ -25,12 +26,27 @@ const AdCreateScreen = () => {
 	const [virtualPrice, setVirtualPrice] = useState('');
 	const [pics, setPics] = useState(null);
 	const [wanted, setWanted] = useState(false);
-
+	const [error, setErrorMessage] = useState('');
+	const [location, setLocation] = useState(null);
 	const { placeAd } = useContext(AdContext);
 	const user = useAuthInfo();
-	// console.log(user);
 	const selectCamera = <Text>Camera</Text>;
 	const selectCameraRoll = <Text>Photo Library</Text>;
+
+	useEffect(() => {
+		getLocation();
+	}, []);
+
+	const getLocation = async () => {
+		let { status } = await Location.requestPermissionsAsync();
+		if (status !== 'granted') {
+			setErrorMessage(
+				'It is not permitted to establish your location on this device'
+			);
+		}
+		let l = await Location.getCurrentPositionAsync();
+		setLocation(l);
+	};
 
 	const updateIndex = index => {
 		switch (index) {
@@ -82,7 +98,8 @@ const AdCreateScreen = () => {
 	};
 
 	const submitAd = () => {
-		// console.log(category, title, description, virtualPrice, pics);
+		const { latitude, longitude } = location.coords;
+		const locationToSave = { longitude, latitude };
 		const ad = new Ad(
 			title,
 			description,
@@ -90,8 +107,10 @@ const AdCreateScreen = () => {
 			virtualPrice,
 			pics,
 			user._id,
-			wanted
+			wanted,
+			locationToSave
 		);
+		// console.log(ad);
 		placeAd(ad);
 	};
 
@@ -101,6 +120,7 @@ const AdCreateScreen = () => {
 				<Text h4>Create a new ad</Text>
 				<View style={{ ...styles.cardContainer, paddingVertical: 0 }}>
 					<Card title="Ad details">
+						{error ? <Text style={styles.error}>{error}</Text> : null}
 						<CheckBox
 							containerStyle={{
 								backgroundColor: 'transparent',

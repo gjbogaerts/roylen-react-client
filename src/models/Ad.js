@@ -6,7 +6,8 @@ class Ad {
 		virtualPrice,
 		picture,
 		creator,
-		wanted
+		wanted,
+		location
 	) {
 		this.title = title;
 		this.description = description;
@@ -15,6 +16,7 @@ class Ad {
 		this.picture = picture;
 		this.creator = creator;
 		this.wanted = wanted;
+		this.location = location;
 	}
 }
 

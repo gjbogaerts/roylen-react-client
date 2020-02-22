@@ -1,6 +1,7 @@
 import createDataContext from './createDataContext';
 import { navigate } from '../routes/RootNavigation';
 import axios from '../api/axios';
+import { Platform } from 'react-native';
 
 const adReducer = (state, action) => {
 	switch (action.type) {
@@ -110,12 +111,22 @@ const placeAd = dispatch => async adObj => {
 		name: fileName,
 		uri: Platform.OS === 'android' ? tmpUri : tmpUri.replace('file://', '')
 	});
-	const { title, description, virtualPrice, category, creator, wanted } = adObj;
+	const {
+		title,
+		description,
+		virtualPrice,
+		category,
+		creator,
+		wanted,
+		location
+	} = adObj;
 	data.append('title', title);
 	data.append('description', description);
 	data.append('virtualPrice', virtualPrice);
 	data.append('category', category);
 	data.append('creator', creator);
+	data.append('longitude', location.longitude);
+	data.append('latitude', location.latitude);
 	if (wanted) {
 		data.append('adNature', 'wanted');
 	} else {
