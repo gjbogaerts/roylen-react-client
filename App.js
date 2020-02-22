@@ -8,6 +8,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { Provider as AuthProvider } from './src/context/AuthContext';
 import { Provider as AdProvider } from './src/context/AdContext';
 import { Provider as MessageProvider } from './src/context/MessageContext';
+import { Provider as SystemMessageProvider } from './src/context/SystemMessageContext';
 import AppContainer from './src/routes/Routes';
 import { navigationRef } from './src/routes/RootNavigation';
 import { styles } from './src/styles/styles';
@@ -40,21 +41,23 @@ const App = () => {
 			<ThemeProvider theme={styles}>
 				<View style={styles.container}>
 					<AuthProvider>
-						<AdProvider>
-							<MessageProvider>
-								<NavigationContainer ref={navigationRef}>
-									<Stack.Navigator
-										initialRouteName="InitialScreen"
-										headerMode="none"
-									>
-										<Stack.Screen
-											name="InitialScreen"
-											component={AppContainer}
-										/>
-									</Stack.Navigator>
-								</NavigationContainer>
-							</MessageProvider>
-						</AdProvider>
+						<SystemMessageProvider>
+							<AdProvider>
+								<MessageProvider>
+									<NavigationContainer ref={navigationRef}>
+										<Stack.Navigator
+											initialRouteName="InitialScreen"
+											headerMode="none"
+										>
+											<Stack.Screen
+												name="InitialScreen"
+												component={AppContainer}
+											/>
+										</Stack.Navigator>
+									</NavigationContainer>
+								</MessageProvider>
+							</AdProvider>
+						</SystemMessageProvider>
 					</AuthProvider>
 				</View>
 			</ThemeProvider>

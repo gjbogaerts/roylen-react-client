@@ -1,17 +1,12 @@
-import { useEffect, useState } from 'react';
-import { AsyncStorage } from 'react-native';
+import { useEffect, useContext } from 'react';
+import { Context as AuthContext } from '../context/AuthContext';
 
 const useAuthInfo = () => {
-	const [user, setUser] = useState(null);
+	const { state, tryLocalSignin } = useContext(AuthContext);
 	useEffect(() => {
-		const getUserInfo = async () => {
-			const userData = await AsyncStorage.getItem('userData');
-			const u = JSON.parse(userData);
-			setUser(u);
-		};
-		getUserInfo();
-	}, []);
-	return user;
+		tryLocalSignin();
+	}, [tryLocalSignin]);
+	return state.user;
 };
 
 export default useAuthInfo;

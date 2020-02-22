@@ -1,4 +1,9 @@
 {
+	"settings": {
+		"react": {
+			"version": "detect"
+		}
+	},
 	"env": {
 		"browser": true,
 		"es6": true,
@@ -16,9 +21,10 @@
 		"ecmaVersion": 2018,
 		"sourceType": "module"
 	},
-	"plugins": ["react", "react-hooks"],
+	"plugins": ["react", "react-native", "react-hooks"],
 	"rules": {
 		"react-hooks/rules-of-hooks": "error",
-		"react-hooks/exhaustive-deps": "warn"
+		"react-hooks/exhaustive-deps": "warn",
+		"react/prop-types": [0]
 	}
 }

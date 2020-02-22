@@ -18,7 +18,8 @@ const authReducer = (state, action) => {
 			return {
 				...state,
 				flashMessage: 'You are successfully signed in',
-				token: action.payload,
+				token: action.payload.token,
+				user: action.payload.user,
 				errorMessage: '',
 				error: false
 			};
@@ -45,14 +46,16 @@ const authReducer = (state, action) => {
 				flashMessage: 'You have signed out',
 				token: null,
 				errorMessage: '',
-				error: false
+				error: false,
+				user: null
 			};
 		case 'update':
 			return {
 				...state,
 				flashMessage: 'Your profile has been updated',
 				errorMessage: '',
-				token: action.payload,
+				token: action.payload.token,
+				user: action.payload.user,
 				error: false
 			};
 		case 'clear_error_message':
@@ -74,7 +77,7 @@ const resetPassword = dispatch => async (key, pw) => {
 	try {
 		const response = await axios.post('/api/conformResetPassword', { key, pw });
 		if (response.data.success) {
-			console.log(response.data.doc);
+			// console.log(response.data.doc);
 			dispatch({
 				type: 'passwordReset',
 				payload: response.data.msg
@@ -134,7 +137,7 @@ const signin = dispatch => async ({ email, password }, msgCallback) => {
 		await AsyncStorage.setItem('userData', JSON.stringify(user));
 		dispatch({
 			type: 'auth',
-			payload: response.data.token
+			payload: { token: response.data.token, user: user }
 		});
 		navigate('Tabs');
 	} catch (err) {
@@ -171,7 +174,7 @@ const updateProfileInfo = dispatch => async (email, profilePic) => {
 			await AsyncStorage.setItem('userData', JSON.stringify(u));
 			dispatch({
 				type: 'update',
-				payload: u.token
+				payload: { token: u.token, user: u }
 			});
 			navigate('Tabs', { flashMessage: 'Your profile has been updated' });
 		}
@@ -201,7 +204,7 @@ const signup = dispatch => {
 			await AsyncStorage.setItem('userData', JSON.stringify(user));
 			dispatch({
 				type: 'auth',
-				payload: response.data.token
+				payload: { token: response.data.token, user: user }
 			});
 			navigate('Tabs');
 		} catch (err) {
@@ -219,7 +222,7 @@ const tryLocalSignin = dispatch => async () => {
 		const userJson = JSON.parse(userData);
 		dispatch({
 			type: 'auth',
-			payload: userJson.token
+			payload: { token: userJson.token, user: userJson }
 		});
 	}
 };
@@ -244,5 +247,5 @@ export const { Provider, Context } = createDataContext(
 		sendResetPasswordEmail,
 		resetPassword
 	},
-	{ token: null, error: false, errorMessage: '', flashMessage: '' }
+	{ token: null, error: false, errorMessage: '', flashMessage: '', user: null }
 );
