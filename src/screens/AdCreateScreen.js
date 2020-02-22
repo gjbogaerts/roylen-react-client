@@ -28,7 +28,7 @@ const AdCreateScreen = () => {
 
 	const { placeAd } = useContext(AdContext);
 	const user = useAuthInfo();
-
+	// console.log(user);
 	const selectCamera = <Text>Camera</Text>;
 	const selectCameraRoll = <Text>Photo Library</Text>;
 

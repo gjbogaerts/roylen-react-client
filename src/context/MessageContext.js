@@ -1,5 +1,4 @@
 import createDataContext from './createDataContext';
-import { navigate } from '../routes/RootNavigation';
 import axios from '../api/axios';
 import { AsyncStorage } from 'react-native';
 

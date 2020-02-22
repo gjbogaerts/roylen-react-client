@@ -1,10 +1,9 @@
-import React, { useContext, useEffect, useState, Fragment } from 'react';
+import React, { useContext, useState, Fragment } from 'react';
 import * as ImagePicker from 'expo-image-picker';
 import {
 	View,
 	ScrollView,
 	StyleSheet,
-	AsyncStorage,
 	Alert,
 	ActivityIndicator
 } from 'react-native';
@@ -23,25 +22,17 @@ import { Context as AdContext } from '../context/AdContext';
 import Spacer from '../components/UI/Spacer';
 import MyOverlay from '../components/UI/MyOverlay';
 import Ads from '../components/Ads';
+import useAuthInfo from '../hooks/useAuthInfo';
 
 const UserProfileScreen = () => {
 	const { signout, updateProfileInfo } = useContext(AuthContext);
 	const { state, getUserAds, deleteAd } = useContext(AdContext);
-	const [user, setUser] = useState(null);
 	const [email, setEmail] = useState('');
 	const [profilePic, setProfilePic] = useState('');
 	const [adsVisible, setAdsVisible] = useState(false);
 	const [myAds, setMyAds] = useState([]);
 
-	useEffect(() => {
-		const fetchUserData = async () => {
-			const userData = await AsyncStorage.getItem('userData');
-			const u = JSON.parse(userData);
-			setUser(u);
-			setEmail(u.email);
-		};
-		fetchUserData();
-	}, []);
+	const user = useAuthInfo();
 
 	const showUserAds = async () => {
 		const userAds = await getUserAds(user._id);

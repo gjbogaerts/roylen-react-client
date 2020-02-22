@@ -6,6 +6,7 @@ import { styles, colors } from '../styles/styles';
 import { Context as AdContext } from '../context/AdContext';
 import { getBaseUrl } from '../api/axios';
 import { Ionicons } from '@expo/vector-icons';
+import useAuthInfo from '../hooks/useAuthInfo';
 // import GallerySwiper from 'react-native-gallery-swiper';
 
 const AdsDetailScreen = ({ navigation }) => {
@@ -13,7 +14,7 @@ const AdsDetailScreen = ({ navigation }) => {
 	const [alert, setAlert] = useState('');
 
 	navigation.setOptions({ title: state.currentAd.title });
-
+	const user = useAuthInfo();
 	const imageUri = state.currentAd.pics.map(img => {
 		return getBaseUrl() + img;
 	});
@@ -79,22 +80,29 @@ const AdsDetailScreen = ({ navigation }) => {
 							Placed on {showDate} by {currentAd.creator.screenName} in category{' '}
 							{currentAd.category}
 						</Text>
-						<TouchableOpacity
-							onPress={() =>
-								navigation.navigate('AdContact', { concerning: currentAd })
-							}
-							style={styles.alertButton}
-						>
-							<Ionicons
-								name="ios-mail"
-								size={24}
-								color={colors.color}
-								style={{ marginTop: 5, marginRight: 10 }}
-							/>
-							<Text style={styles.link}>
-								Contact {currentAd.creator.screenName}!
+						{user ? (
+							<TouchableOpacity
+								onPress={() =>
+									navigation.navigate('AdContact', { concerning: currentAd })
+								}
+								style={styles.alertButton}
+							>
+								<Ionicons
+									name="ios-mail"
+									size={24}
+									color={colors.color}
+									style={{ marginTop: 5, marginRight: 10 }}
+								/>
+								<Text style={styles.link}>
+									Contact {currentAd.creator.screenName}!
+								</Text>
+							</TouchableOpacity>
+						) : (
+							<Text>
+								You need to be logged in to contact{' '}
+								{currentAd.creator.screenName}
 							</Text>
-						</TouchableOpacity>
+						)}
 					</Card>
 				</View>
 				<Text>{currentAd.description}</Text>

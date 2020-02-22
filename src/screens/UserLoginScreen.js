@@ -1,14 +1,24 @@
-import React, { useContext } from 'react';
+import React, { useContext, useCallback } from 'react';
 import { View, Alert } from 'react-native';
 import { Text } from 'react-native-elements';
 import { styles } from '../styles/styles';
 import AuthForm from '../components/AuthForm';
 import { Context as AuthContext } from '../context/AuthContext';
 import { Context as MessageContext } from '../context/MessageContext';
+import { useFocusEffect } from '@react-navigation/native';
 
 const UserLoginScreen = props => {
 	const { state, signin, clearErrorMessage } = useContext(AuthContext);
-	const { readMessage } = useContext(MessageContext);
+	const { readMessage, cleanUpMessage } = useContext(MessageContext);
+
+	useFocusEffect(
+		useCallback(() => {
+			// console.log('in focus');
+			return () => {
+				cleanUpMessage();
+			};
+		}, [cleanUpMessage])
+	);
 
 	const showAlert = () => {
 		Alert.alert(
@@ -50,7 +60,7 @@ const UserLoginScreen = props => {
 		</View>
 	);
 };
-UserLoginScreen.navigationOptions = nav => {
+UserLoginScreen.navigationOptions = () => {
 	return {
 		headerShown: false
 	};

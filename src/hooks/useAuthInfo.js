@@ -5,7 +5,8 @@ const useAuthInfo = () => {
 	const { state, tryLocalSignin } = useContext(AuthContext);
 	useEffect(() => {
 		tryLocalSignin();
-	}, [tryLocalSignin]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 	return state.user;
 };
 

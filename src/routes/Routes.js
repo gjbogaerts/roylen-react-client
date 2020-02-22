@@ -68,7 +68,7 @@ const AdListComponent = () => {
 	);
 };
 
-const TabComponent = ({ navigation }) => {
+const TabComponent = () => {
 	const msgContext = useContext(MessageContext);
 	useEffect(() => {
 		const getMessageCount = async () => {
@@ -77,7 +77,7 @@ const TabComponent = ({ navigation }) => {
 		getMessageCount();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
-	const user = useAuthInfo(navigation, '');
+	const user = useAuthInfo();
 
 	return (
 		<TabsStack.Navigator
@@ -93,17 +93,19 @@ const TabComponent = ({ navigation }) => {
 				}
 			}}
 		>
-			<TabsStack.Screen
-				name="AdCreate"
-				component={AdCreateScreen}
-				options={{
-					title: 'New Ad',
-					tabBarIcon: ({ focused }) => {
-						let c = focused ? colors.color : colors.backgroundColor;
-						return <Ionicons name="ios-add" size={25} color={c} />;
-					}
-				}}
-			/>
+			{user ? (
+				<TabsStack.Screen
+					name="AdCreate"
+					component={AdCreateScreen}
+					options={{
+						title: 'New Ad',
+						tabBarIcon: ({ focused }) => {
+							let c = focused ? colors.color : colors.backgroundColor;
+							return <Ionicons name="ios-add" size={25} color={c} />;
+						}
+					}}
+				/>
+			) : null}
 			<TabsStack.Screen
 				name="AdsFlow"
 				component={AdListComponent}

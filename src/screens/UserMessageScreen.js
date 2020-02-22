@@ -1,5 +1,5 @@
-import React, { useContext, useEffect, useState, useCallback } from 'react';
-import { View, FlatList, StyleSheet, AsyncStorage } from 'react-native';
+import React, { useContext, useState, useCallback } from 'react';
+import { View, FlatList, StyleSheet } from 'react-native';
 import {
 	ListItem,
 	Text,
@@ -14,12 +14,13 @@ import { styles, colors } from '../styles/styles';
 import { getBaseUrl } from '../api/axios';
 import ContactForm from '../components/ContactForm';
 import Message from '../models/Message';
+import useAuthInfo from '../hooks/useAuthInfo';
 
 const UserMessageScreen = () => {
 	const { state, markRead, sendMessage, cleanUpMessage } = useContext(
 		MessageContext
 	);
-	const [user, setUser] = useState(null);
+	// const [user, setUser] = useState(null);
 	const [modalShow, setModalShow] = useState(false);
 	const [replyTo, setReplyTo] = useState(null);
 	const [currentAd, setCurrentAd] = useState(null);
@@ -41,14 +42,15 @@ const UserMessageScreen = () => {
 		}, [cleanUpMessage])
 	);
 
-	useEffect(() => {
-		const fetchUserData = async () => {
-			const userData = await AsyncStorage.getItem('userData');
-			const u = JSON.parse(userData);
-			setUser(u);
-		};
-		fetchUserData();
-	}, []);
+	const user = useAuthInfo();
+	// useEffect(() => {
+	// 	const fetchUserData = async () => {
+	// 		const userData = await AsyncStorage.getItem('userData');
+	// 		const u = JSON.parse(userData);
+	// 		setUser(u);
+	// 	};
+	// 	fetchUserData();
+	// }, []);
 
 	const passMessage = (userScreenName, msge, from, to, re, currentAdTitle) => {
 		const msg = new Message(userScreenName, msge, from, to, re, currentAdTitle);
