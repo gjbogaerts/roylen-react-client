@@ -198,9 +198,40 @@ const getUserAds = dispatch => async userId => {
 	}
 };
 
+const getDistanceAds = dispatch => async (dist, location) => {
+	const { longitude, latitude } = location.coords;
+	console.log(dist, longitude, latitude);
+
+	try {
+		const response = await axios.post(`api/ads/withDistance`, {
+			dist,
+			longitude,
+			latitude
+		});
+		console.log(response.data);
+		dispatch({
+			type: 'getAllAds',
+			payload: response.data
+		});
+	} catch (err) {
+		dispatch({
+			type: 'error',
+			payload: err.errorMessage
+		});
+	}
+};
+
 export const { Provider, Context } = createDataContext(
 	adReducer,
-	{ getAllAds, getAd, placeAd, getSpecAds, deleteAd, getUserAds },
+	{
+		getAllAds,
+		getAd,
+		placeAd,
+		getSpecAds,
+		deleteAd,
+		getUserAds,
+		getDistanceAds
+	},
 	{
 		adList: null,
 		currentAd: null,

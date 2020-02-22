@@ -3,7 +3,8 @@ import {
 	View,
 	FlatList,
 	ActivityIndicator,
-	TouchableOpacity
+	TouchableOpacity,
+	Alert
 } from 'react-native';
 import {
 	Text,
@@ -13,6 +14,7 @@ import {
 	Input,
 	Slider
 } from 'react-native-elements';
+import * as Location from 'expo-location';
 import { styles, colors } from '../styles/styles';
 import { Context as AdContext } from '../context/AdContext';
 import PickerModal from 'react-native-picker-modal-view';
@@ -20,14 +22,18 @@ import { getBaseUrl } from '../api/axios';
 import categories from '../models/Categories';
 import { Ionicons } from '@expo/vector-icons';
 
-const AdsListScreen = ({ navigation }) => {
-	const { state, getAllAds, getAd, getSpecAds } = useContext(AdContext);
+const AdsListScreen = () => {
+	const { state, getAllAds, getAd, getSpecAds, getDistanceAds } = useContext(
+		AdContext
+	);
 	const [search, setSearch] = useState('');
 	const [searchVisible, setSearchVisible] = useState(false);
 	const [filterVisible, setFilterVisible] = useState(false);
 	const [showSearchResult, setShowSearchResult] = useState(false);
 	const [filter, setFilter] = useState(0);
 	const [filteredAds, setFilteredAds] = useState([]);
+	const [distanceFilter, setDistanceFilter] = useState(4);
+	const [distanceFilteredAds, setDistanceFilteredAds] = useState([]);
 
 	useEffect(() => {
 		const getAds = async () => {
@@ -35,8 +41,10 @@ const AdsListScreen = ({ navigation }) => {
 		};
 		setSearch('');
 		setFilter(0);
+		setDistanceFilter(4);
 		getAds();
-	}, [filteredAds]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	const startSearch = (itemToSearch, inCategory) => {
 		setSearchVisible(false);
@@ -44,10 +52,10 @@ const AdsListScreen = ({ navigation }) => {
 		getSpecAds(itemToSearch, inCategory);
 	};
 
-	const implementFilter = val => {
+	const implementWantedFilter = val => {
 		setFilter(val);
 		setFilterVisible(false);
-		let ads = state.adList;
+		let ads;
 		switch (val) {
 			case 0:
 				setFilteredAds(state.adList);
@@ -67,6 +75,43 @@ const AdsListScreen = ({ navigation }) => {
 				break;
 		}
 		// console.log(ads.length);
+	};
+
+	const implementDistanceFilter = async val => {
+		const { status } = await Location.requestPermissionsAsync();
+		if (status !== 'granted') {
+			Alert.alert(
+				'We cannot provide you with a filter on distance, because we need to know youw own location'
+			);
+		}
+		const location = await Location.getCurrentPositionAsync();
+		setDistanceFilter(val);
+		setFilterVisible(false);
+		let ads;
+		switch (val) {
+			case 4:
+				setDistanceFilteredAds(state.adList);
+				break;
+			case 0:
+				ads = getDistanceAds(1, location);
+				setDistanceFilteredAds(ads);
+				break;
+			case 1:
+				ads = getDistanceAds(5, location);
+				setDistanceFilteredAds(ads);
+				break;
+			case 2:
+				ads = getDistanceAds(10, location);
+				setDistanceFilteredAds(ads);
+				break;
+			case 3:
+				ads = getDistanceAds(50, location);
+				setDistanceFilteredAds(ads);
+				break;
+			default:
+				setDistanceFilteredAds(state.adList);
+		}
+		// console.log(distanceFilteredAds);
 	};
 
 	const renderGetAllAdsButton = () => {
@@ -97,9 +142,16 @@ const AdsListScreen = ({ navigation }) => {
 						isVisible={filterVisible}
 						onBackdropPress={() => setFilterVisible(false)}
 						borderRadius={15}
-						height={200}
+						height={300}
 					>
-						<>
+						<View
+							style={{
+								flexDirection: 'column',
+								alignItems: 'stretch',
+								justifyContent: 'space-between',
+								height: '100%'
+							}}
+						>
 							<PickerModal
 								items={categories}
 								showAlphabeticalIndex
@@ -131,9 +183,34 @@ const AdsListScreen = ({ navigation }) => {
 								thumbTintColor={colors.color}
 								minimumTrackTintColor={colors.color}
 								value={filter}
-								onSlidingComplete={implementFilter}
+								onSlidingComplete={implementWantedFilter}
 							/>
-						</>
+							<View>
+								<Text>Distance:</Text>
+								<View
+									style={{
+										...styles.containerRow,
+										justifyContent: 'space-between'
+									}}
+								>
+									<Text style={{ fontSize: 14 }}>&lt; 1 km</Text>
+									<Text style={{ fontSize: 14 }}>&lt; 5 km</Text>
+									<Text style={{ fontSize: 14 }}>&lt; 10 km</Text>
+									<Text style={{ fontSize: 14 }}>&lt; 50 km</Text>
+									<Text style={{ fontSize: 14 }}>Any</Text>
+								</View>
+								<Slider
+									style={{ position: 'relative', top: -10 }}
+									minimumValue={0}
+									maximumValue={4}
+									step={1}
+									thumbTintColor={colors.color}
+									minimumTrackTintColor={colors.color}
+									value={distanceFilter}
+									onSlidingComplete={implementDistanceFilter}
+								/>
+							</View>
+						</View>
 					</Overlay>
 					<Overlay
 						isVisible={searchVisible}
@@ -180,7 +257,11 @@ const AdsListScreen = ({ navigation }) => {
 					{showSearchResult ? renderGetAllAdsButton() : null}
 					<FlatList
 						data={
-							filteredAds && filteredAds.length ? filteredAds : state.adList
+							filteredAds && filteredAds.length
+								? filteredAds
+								: distanceFilteredAds && distanceFilteredAds.length
+								? distanceFilteredAds
+								: state.adList
 						}
 						keyExtractor={item => item._id}
 						renderItem={({ item }) => {
