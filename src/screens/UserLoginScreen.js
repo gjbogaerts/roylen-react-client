@@ -8,62 +8,62 @@ import { Context as MessageContext } from '../context/MessageContext';
 import { useFocusEffect } from '@react-navigation/native';
 
 const UserLoginScreen = props => {
-	const { state, signin, clearErrorMessage } = useContext(AuthContext);
-	const { readMessage, cleanUpMessage } = useContext(MessageContext);
+  const { state, signin, clearErrorMessage } = useContext(AuthContext);
+  const { readMessage, cleanUpMessage } = useContext(MessageContext);
 
-	useFocusEffect(
-		useCallback(() => {
-			// console.log('in focus');
-			return () => {
-				cleanUpMessage();
-			};
-		}, [cleanUpMessage])
-	);
+  useFocusEffect(
+    useCallback(() => {
+      // console.log('in focus');
+      return () => {
+        cleanUpMessage();
+      };
+    }, [cleanUpMessage])
+  );
 
-	const showAlert = () => {
-		Alert.alert(
-			'Error signing in',
-			"Something went wrong when you tried to sign in. Perhaps you've misspelled your email or password?",
-			[{ text: 'OK', onPress: () => clearErrorMessage() }],
-			{ cancelable: false }
-		);
-	};
+  const showAlert = () => {
+    Alert.alert(
+      'Error signing in',
+      "Something went wrong when you tried to sign in. Perhaps you've misspelled your email or password?",
+      [{ text: 'OK', onPress: () => clearErrorMessage() }],
+      { cancelable: false }
+    );
+  };
 
-	const sendForgottenPasswordLink = () => {
-		props.navigation.navigate('ResetPassword');
-	};
+  const sendForgottenPasswordLink = () => {
+    props.navigation.navigate('ResetPassword');
+  };
 
-	return (
-		<View style={styles.container}>
-			<View style={styles.contentContainer}>
-				{state.flashMessage ? (
-					<View>
-						<Text>{state.flashMessage}</Text>
-					</View>
-				) : null}
-				<AuthForm
-					showSignUp={false}
-					title="Log in"
-					buttonTitle="Sign in to Roylen"
-					onSubmit={signin}
-					getMessageCount={readMessage}
-					navigation={props.navigation}
-					navigationLabel="No account yet? You can sign up here"
-					navigationLink="Signup"
-					showForgotPassword
-					showForgotPasswordPressed={sendForgottenPasswordLink}
-				/>
-				{state.errorMessage && props.navigation.isFocused()
-					? showAlert()
-					: null}
-			</View>
-		</View>
-	);
+  return (
+    <View style={styles.container}>
+      <View style={styles.contentContainer}>
+        {state.flashMessage ? (
+          <View>
+            <Text>{state.flashMessage}</Text>
+          </View>
+        ) : null}
+        <AuthForm
+          showSignUp={false}
+          title="Log in"
+          buttonTitle="Sign in to Roylen"
+          onSubmitClicked={signin}
+          getMessageCount={readMessage}
+          navigation={props.navigation}
+          navigationLabel="No account yet? You can sign up here"
+          navigationLink="Signup"
+          showForgotPassword
+          showForgotPasswordPressed={sendForgottenPasswordLink}
+        />
+        {state.errorMessage && props.navigation.isFocused()
+          ? showAlert()
+          : null}
+      </View>
+    </View>
+  );
 };
 UserLoginScreen.navigationOptions = () => {
-	return {
-		headerShown: false
-	};
+  return {
+    headerShown: false
+  };
 };
 
 export default UserLoginScreen;

@@ -18,11 +18,13 @@
 		"expo-font": "~8.0.0",
 		"expo-image-picker": "~8.0.1",
 		"expo-localization": "~8.0.0",
+		"expo-location": "~8.0.0",
 		"expo-mail-composer": "~8.0.0",
 		"form-data": "^3.0.0",
 		"i18n-js": "^3.5.1",
 		"react": "~16.9.0",
 		"react-dom": "~16.9.0",
+		"react-hook-form": "^4.9.8",
 		"react-native": "https://github.com/expo/react-native/archive/sdk-36.0.0.tar.gz",
 		"react-native-elements": "^1.2.7",
 		"react-native-gallery-swiper": "^1.25.2",
@@ -32,8 +34,7 @@
 		"react-native-reanimated": "~1.4.0",
 		"react-native-safe-area-context": "0.6.0",
 		"react-native-screens": "2.0.0-alpha.12",
-		"react-native-web": "~0.11.7",
-		"expo-location": "~8.0.0"
+		"react-native-web": "~0.11.7"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.0.0",
