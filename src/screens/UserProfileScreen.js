@@ -26,12 +26,14 @@ import Ads from '../components/Ads';
 import useAuthInfo from '../hooks/useAuthInfo';
 
 const UserProfileScreen = () => {
-  const { signout, updateProfileInfo } = useContext(AuthContext);
+  const { signout, updateProfileInfo, checkUniqueEmail } = useContext(
+    AuthContext
+  );
   const { state, getUserAds, deleteAd } = useContext(AdContext);
   const [profilePic, setProfilePic] = useState('');
   const [adsVisible, setAdsVisible] = useState(false);
   const [myAds, setMyAds] = useState([]);
-  const { handleSubmit, control, errors } = useForm();
+  const { handleSubmit, control, errors, setError } = useForm();
   const user = useAuthInfo();
 
   const showUserAds = async () => {
@@ -45,8 +47,17 @@ const UserProfileScreen = () => {
     };
   };
 
-  const handleProfileChange = data => {
+  const handleProfileChange = async data => {
     const { email } = data;
+    const isUnique = await checkUniqueEmail(email);
+    if (!isUnique) {
+      setError(
+        'email',
+        'notUnique',
+        'This email address is already in use; please use another email address.'
+      );
+      return;
+    }
     updateProfileInfo(email, profilePic);
   };
 
@@ -142,7 +153,8 @@ const UserProfileScreen = () => {
             />
             {errors.email && (
               <Text style={styles.error}>
-                This is not a well-formed email address; please try again.
+                {errors.email.message ||
+                  'This is not a well-formed email address; please try again.'}
               </Text>
             )}
             <Text style={{ marginLeft: 10 }}>

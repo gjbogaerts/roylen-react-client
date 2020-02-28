@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import { Text, Card, Input, Button } from 'react-native-elements';
 import { Entypo } from '@expo/vector-icons';
 import { useForm, Controller } from 'react-hook-form';
 import Spacer from './UI/Spacer';
 import { colors, styles } from '../styles/styles';
+import { Context as AuthContext } from '../context/AuthContext';
 
 const AuthForm = ({
   title,
@@ -18,8 +19,31 @@ const AuthForm = ({
   showForgotPassword,
   showForgotPasswordPressed
 }) => {
-  const { control, handleSubmit, errors } = useForm();
-  const onSubmit = data => {
+  const { control, handleSubmit, errors, setError } = useForm();
+  const { checkUniqueScreenName, checkUniqueEmail } = useContext(AuthContext);
+
+  const onSubmit = async data => {
+    const isScreenNameUnique = await checkUniqueScreenName(data.screenName);
+    if (showSignUp) {
+      const isEmailUnique = await checkUniqueEmail(data.email);
+      if (!isEmailUnique) {
+        setError(
+          'email',
+          'notUnique',
+          'This email address is already taken, please choose a different one.'
+        );
+        return;
+      }
+    }
+    if (!isScreenNameUnique) {
+      setError(
+        'screenName',
+        'notUnique',
+        'This screen name is already taken, please choose a different one.'
+      );
+      return;
+    }
+
     onSubmitClicked(data, getMessageCount);
   };
   const onChange = args => {
@@ -46,7 +70,9 @@ const AuthForm = ({
               defaultValue=""
             />
             {errors.screenName && (
-              <Text style={styles.error}>Minimum of 3 characters</Text>
+              <Text style={styles.error}>
+                {errors.screenName.message || 'Minimum of 3 characters'}
+              </Text>
             )}
           </>
         ) : null}
@@ -68,7 +94,8 @@ const AuthForm = ({
         />
         {errors.email && (
           <Text style={styles.error}>
-            You need to fill out a valid email address
+            {errors.email.message ||
+              'You need to fill out a valid email address'}
           </Text>
         )}
         <Controller

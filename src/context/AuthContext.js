@@ -156,15 +156,17 @@ const signin = dispatch => async ({ email, password }, msgCallback) => {
 };
 
 const updateProfileInfo = dispatch => async (email, profilePic) => {
-  const tmpUri = profilePic.uri;
-  const uriParts = tmpUri.split('/');
-  const fileName = uriParts[uriParts.length - 1];
   const data = new FormData();
-  data.append('file', {
-    name: fileName,
-    uri: Platform.OS === 'android' ? tmpUri : tmpUri.replace('file://', '')
-  });
   data.append('email', email);
+  if (profilePic && profilePic.uri) {
+    const tmpUri = profilePic.uri;
+    const uriParts = tmpUri.split('/');
+    const fileName = uriParts[uriParts.length - 1];
+    data.append('file', {
+      name: fileName,
+      uri: Platform.OS === 'android' ? tmpUri : tmpUri.replace('file://', '')
+    });
+  }
   try {
     const response = await axios.post('/api/profile', data, {
       headers: {
@@ -246,15 +248,19 @@ const checkUniqueScreenName = dispatch => async name => {
   try {
     const response = await axios.get(`/api/checkScreenName/${name}`);
     // console.log(response.data.numUsers == 0);
+
     dispatch({
       type: 'isUnique',
       payload: { screenName: response.data.numUsers === 0 }
     });
+    if (response.data.numUsers == 0) return true;
+    return false;
   } catch (err) {
     dispatch({
       type: 'isUnique',
       payload: false
     });
+    return false;
   }
 };
 
@@ -265,11 +271,14 @@ const checkUniqueEmail = dispatch => async email => {
       type: 'isUnique',
       payload: { email: response.data.numUsers === 0 }
     });
+    if (response.data.numUsers == 0) return true;
+    return false;
   } catch (err) {
     dispatch({
       type: 'isUnique',
       payload: false
     });
+    return false;
   }
 };
 
