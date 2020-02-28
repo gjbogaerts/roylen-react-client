@@ -229,7 +229,7 @@ const getUserAds = dispatch => async userId => {
 
 const getDistanceAds = dispatch => async (dist, location) => {
   const { longitude, latitude } = location.coords;
-  console.log(dist, longitude, latitude);
+  // console.log(dist, longitude, latitude);
 
   try {
     const response = await axios.post(`api/ads/withDistance`, {
@@ -237,7 +237,7 @@ const getDistanceAds = dispatch => async (dist, location) => {
       longitude,
       latitude
     });
-    console.log(response.data);
+    // console.log(response.data);
     dispatch({
       type: 'getAllAds',
       payload: response.data
