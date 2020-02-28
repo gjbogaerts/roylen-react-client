@@ -13,6 +13,11 @@ const authReducer = (state, action) => {
         isUnique: { ...state.isUnique, ...action.payload }
       };
     }
+    case 'favorite':
+      return {
+        ...state,
+        user: action.payload.user
+      };
     case 'error':
       return {
         ...state,
@@ -282,6 +287,21 @@ const checkUniqueEmail = dispatch => async email => {
   }
 };
 
+const loveAd = dispatch => async (userId, adId) => {
+  try {
+    const response = await axios.post('/api/favorite', { userId, adId });
+    dispatch({
+      type: 'favorite',
+      payload: response.data
+    });
+  } catch (err) {
+    dispatch({
+      type: 'error',
+      payload: err.errorMessage
+    });
+  }
+};
+
 export const { Provider, Context } = createDataContext(
   authReducer,
   {
@@ -294,7 +314,8 @@ export const { Provider, Context } = createDataContext(
     sendResetPasswordEmail,
     resetPassword,
     checkUniqueEmail,
-    checkUniqueScreenName
+    checkUniqueScreenName,
+    loveAd
   },
   {
     token: null,

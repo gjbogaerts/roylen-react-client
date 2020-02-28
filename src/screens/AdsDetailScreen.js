@@ -3,6 +3,7 @@ import { ScrollView, View, TouchableOpacity, Image, Alert } from 'react-native';
 import { Text, Card } from 'react-native-elements';
 import { styles, colors } from '../styles/styles';
 import { Context as AdContext } from '../context/AdContext';
+import { Context as AuthContext } from '../context/AuthContext';
 import { getBaseUrl } from '../api/axios';
 import { Ionicons } from '@expo/vector-icons';
 import useAuthInfo from '../hooks/useAuthInfo';
@@ -10,6 +11,7 @@ import useAuthInfo from '../hooks/useAuthInfo';
 
 const AdsDetailScreen = ({ navigation }) => {
   const { state, sendWarning } = useContext(AdContext);
+  const { loveAd } = useContext(AuthContext);
   const [alert, setAlert] = useState('');
 
   navigation.setOptions({ title: state.currentAd.title });
@@ -34,6 +36,11 @@ const AdsDetailScreen = ({ navigation }) => {
     setAlert(state.message);
   };
 
+  const favoriteAd = async () => {
+    await loveAd(user._id, currentAd._id);
+    setAlert('This ad has been added to your favorites list');
+  };
+
   if (alert) {
     Alert.alert('Thank you', alert, ['OK']);
   }
@@ -50,14 +57,24 @@ const AdsDetailScreen = ({ navigation }) => {
 						height: 300
 					}}
 				/> */}
+
         <Text h4>{currentAd.title}</Text>
-        <TouchableOpacity style={styles.alertButton} onPress={warnAdmin}>
-          <Ionicons name="ios-alert" color={colors.errorColor} size={24} />
-        </TouchableOpacity>
+
         <Image
           source={{ uri: imageUri[0] }}
           style={{ width: 400, height: 400 }}
         />
+        <View style={{ ...styles.containerRow, justifyContent: 'flex-end' }}>
+          <TouchableOpacity style={styles.alertButton} onPress={warnAdmin}>
+            <Ionicons name="ios-alert" color={colors.errorColor} size={24} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{ ...styles.alertButton, marginLeft: 10 }}
+            onPress={favoriteAd}
+          >
+            <Ionicons name="ios-heart" color={colors.color} size={24} />
+          </TouchableOpacity>
+        </View>
 
         <View style={styles.cardContainer}>
           <Card title={currentAd.title}>
@@ -99,7 +116,7 @@ const AdsDetailScreen = ({ navigation }) => {
 
 AdsDetailScreen.navigationOptions = () => {
   return {
-    headerShown: true
+    headerShown: false
   };
 };
 
