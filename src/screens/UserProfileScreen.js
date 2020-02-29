@@ -29,18 +29,30 @@ const UserProfileScreen = () => {
   const { signout, updateProfileInfo, checkUniqueEmail } = useContext(
     AuthContext
   );
-  const { state, getUserAds, deleteAd } = useContext(AdContext);
+  const { state, getUserAds, getSavedAds, deleteAd, getAd } = useContext(
+    AdContext
+  );
   const [profilePic, setProfilePic] = useState('');
   const [adsVisible, setAdsVisible] = useState(false);
   const [myAds, setMyAds] = useState([]);
+  const [useSaved, setUseSaved] = useState(false);
   const { handleSubmit, control, errors, setError } = useForm();
   const user = useAuthInfo();
 
   const showUserAds = async () => {
     const userAds = await getUserAds(user._id);
     setMyAds(userAds);
+    setUseSaved(false);
     setAdsVisible(true);
   };
+
+  const showSavedAds = async () => {
+    const savedAds = await getSavedAds(user._id);
+    setMyAds(savedAds);
+    setUseSaved(true);
+    setAdsVisible(true);
+  };
+
   const onChange = args => {
     return {
       value: args[0].nativeEvent.text
@@ -181,6 +193,9 @@ const UserProfileScreen = () => {
         onBackdropPress={() => setAdsVisible(false)}
       >
         <Ads
+          showDelete={useSaved ? false : true}
+          getAd={getAd}
+          removeOverlay={() => setAdsVisible(false)}
           ads={myAds}
           message={state.message}
           onDeletePressed={item => {
@@ -193,6 +208,7 @@ const UserProfileScreen = () => {
         {user ? printUserData() : null}
 
         <Button title="See your current ads" onPress={showUserAds} />
+        <Button title="See your saved ads" onPress={showSavedAds} />
         <Button title="Log out" onPress={signout} />
       </View>
     </ScrollView>

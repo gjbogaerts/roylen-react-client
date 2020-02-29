@@ -18,6 +18,11 @@ const adReducer = (state, action) => {
         currentAd: action.payload,
         errorMessage: ''
       };
+    case 'savedAds':
+      return {
+        ...state,
+        savedAds: action.payload
+      };
     case 'placeAd':
       return {
         ...state,
@@ -105,6 +110,22 @@ const getSpecAds = dispatch => async (q, inCat) => {
       type: 'getAllAds',
       payload: response.data
     });
+  } catch (err) {
+    dispatch({
+      type: 'error',
+      payload: err.errorMessage
+    });
+  }
+};
+
+const getSavedAds = dispatch => async userId => {
+  try {
+    const response = await axios.get(`api/ads/saved/${userId}`);
+    dispatch({
+      type: 'savedAds',
+      payload: response.data
+    });
+    return response.data;
   } catch (err) {
     dispatch({
       type: 'error',
@@ -259,6 +280,7 @@ export const { Provider, Context } = createDataContext(
     getSpecAds,
     deleteAd,
     getUserAds,
+    getSavedAds,
     getDistanceAds,
     sendWarning
   },
@@ -267,6 +289,7 @@ export const { Provider, Context } = createDataContext(
     currentAd: null,
     errorMessage: '',
     userAds: null,
+    savedAds: null,
     message: ''
   }
 );
