@@ -2,7 +2,6 @@ import React, { useState, useContext, useEffect } from 'react';
 import { View, ScrollView } from 'react-native';
 import {
   Text,
-  Input,
   Card,
   Button,
   ButtonGroup,
@@ -17,6 +16,7 @@ import { styles } from '../styles/styles';
 import categories from '../models/Categories';
 import PickerModal from 'react-native-picker-modal-view';
 import Ad from '../models/Ad';
+import MyInput from '../components/UI/MyInput';
 import { Context as AdContext } from '../context/AdContext';
 import useAuthInfo from '../hooks/useAuthInfo';
 
@@ -156,20 +156,9 @@ const AdCreateScreen = () => {
             />
 
             <Controller
-              as={<Input />}
-              label={
-                <Tooltip
-                  width={200}
-                  height={50}
-                  popover={
-                    <Text style={styles.tooltipTextStyle}>
-                      Min. 5, max. 50 chars
-                    </Text>
-                  }
-                >
-                  <Text>Title</Text>
-                </Tooltip>
-              }
+              as={<MyInput />}
+              label="Title"
+              placeholder="Min 5, max. 50 chars"
               name="title"
               defaultValue=""
               onChange={onChange}
@@ -181,18 +170,9 @@ const AdCreateScreen = () => {
             )}
 
             <Controller
-              as={<Input />}
-              label={
-                <Tooltip
-                  width={200}
-                  height={50}
-                  popover={
-                    <Text style={styles.tooltipTextStyle}>Max. 5200 chars</Text>
-                  }
-                >
-                  <Text>Description</Text>
-                </Tooltip>
-              }
+              as={<MyInput />}
+              label="Description"
+              placeholder="Describe the object in max 5200 chars"
               multiline
               name="description"
               onChange={onChange}
@@ -204,21 +184,9 @@ const AdCreateScreen = () => {
                 This field is required, maximum 5200 characters
               </Text>
             )}
-            <Input
-              label={
-                <Tooltip
-                  width={200}
-                  height={50}
-                  popover={
-                    <Text style={styles.tooltipTextStyle}>
-                      Only whole numbers
-                    </Text>
-                  }
-                >
-                  <Text>Your price in nix</Text>
-                </Tooltip>
-              }
-              placeholder="Set your price in nix"
+            <MyInput
+              label="Your price"
+              placeholder="Set your price in nix, only whole numbers"
               value={virtualPrice}
               onChangeText={setVirtualPrice}
             />

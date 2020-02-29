@@ -1,8 +1,9 @@
 import React from 'react';
 import { View } from 'react-native';
-import { Text, Button, Input } from 'react-native-elements';
+import { Text, Button } from 'react-native-elements';
 import { useForm, Controller } from 'react-hook-form';
 import { styles, colors } from '../styles/styles';
+import MyInput from './UI/MyInput';
 
 const MessageModal = ({ receiverName, closeForm, sendMsg }) => {
   const { handleSubmit, control, errors } = useForm();
@@ -20,7 +21,7 @@ const MessageModal = ({ receiverName, closeForm, sendMsg }) => {
       <View style={{ marginTop: 22 }}>
         <Text style={styles.formText}>Message for {receiverName}</Text>
         <Controller
-          as={<Input />}
+          as={<MyInput />}
           multiline
           label="Type your message"
           defaultValue=""

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, SafeAreaView } from 'react-native';
 import { AppLoading } from 'expo';
 import * as Font from 'expo-font';
 import { ThemeProvider } from 'react-native-elements';
@@ -13,61 +13,61 @@ import AppContainer from './src/routes/Routes';
 import { navigationRef } from './src/routes/RootNavigation';
 import { styles } from './src/styles/styles';
 const fetchFonts = () => {
-	return Font.loadAsync({
-		dosis: require('./assets/fonts/Dosis-Medium.otf'),
-		'dosis-bold': require('./assets/fonts/Dosis-Bold.otf'),
-		'dosis-regular': require('./assets/fonts/Dosis-Regular.otf'),
-		patrick: require('./assets/fonts/PatrickHandSC-Regular.ttf'),
-		quicksand: require('./assets/fonts/Quicksand-Regular.ttf'),
-		'quicksand-bold': require('./assets/fonts/Quicksand-Bold.ttf')
-	});
+  return Font.loadAsync({
+    dosis: require('./assets/fonts/Dosis-Medium.otf'),
+    'dosis-bold': require('./assets/fonts/Dosis-Bold.otf'),
+    'dosis-regular': require('./assets/fonts/Dosis-Regular.otf'),
+    patrick: require('./assets/fonts/PatrickHandSC-Regular.ttf'),
+    quicksand: require('./assets/fonts/Quicksand-Regular.ttf'),
+    'quicksand-bold': require('./assets/fonts/Quicksand-Bold.ttf')
+  });
 };
 
 const Stack = createStackNavigator();
 
 const App = () => {
-	const [fontsLoaded, setFontsLoaded] = useState(false);
+  const [fontsLoaded, setFontsLoaded] = useState(false);
 
-	if (!fontsLoaded) {
-		return (
-			<AppLoading
-				startAsync={fetchFonts}
-				onFinish={() => setFontsLoaded(true)}
-			/>
-		);
-	}
-	try {
-		return (
-			<ThemeProvider theme={styles}>
-				<View style={styles.container}>
-					<AuthProvider>
-						<SystemMessageProvider>
-							<AdProvider>
-								<MessageProvider>
-									<NavigationContainer ref={navigationRef}>
-										<Stack.Navigator
-											initialRouteName="InitialScreen"
-											headerMode="none"
-										>
-											<Stack.Screen
-												name="InitialScreen"
-												component={AppContainer}
-											/>
-										</Stack.Navigator>
-									</NavigationContainer>
-								</MessageProvider>
-							</AdProvider>
-						</SystemMessageProvider>
-					</AuthProvider>
-				</View>
-			</ThemeProvider>
-		);
-	} catch (err) {
-		return (
-			<View>
-				<Text>{err}</Text>
-			</View>
-		);
-	}
+  if (!fontsLoaded) {
+    return (
+      <AppLoading
+        startAsync={fetchFonts}
+        onFinish={() => setFontsLoaded(true)}
+      />
+    );
+  }
+  try {
+    return (
+      <ThemeProvider theme={styles}>
+        <SafeAreaView style={styles.container}>
+          <AuthProvider>
+            <SystemMessageProvider>
+              <AdProvider>
+                <MessageProvider>
+                  <NavigationContainer ref={navigationRef}>
+                    <Stack.Navigator
+                      initialRouteName="InitialScreen"
+                      headerMode="none"
+                    >
+                      <Stack.Screen
+                        name="InitialScreen"
+                        component={AppContainer}
+                      />
+                    </Stack.Navigator>
+                  </NavigationContainer>
+                </MessageProvider>
+              </AdProvider>
+            </SystemMessageProvider>
+          </AuthProvider>
+        </SafeAreaView>
+      </ThemeProvider>
+    );
+  } catch (err) {
+    return (
+      <View>
+        <Text>{err}</Text>
+      </View>
+    );
+  }
 };
 export default App;

@@ -1,11 +1,12 @@
 import React, { useContext } from 'react';
 import { TouchableOpacity, View } from 'react-native';
-import { Text, Card, Input, Button } from 'react-native-elements';
+import { Text, Card, Button } from 'react-native-elements';
 import { Entypo } from '@expo/vector-icons';
 import { useForm, Controller } from 'react-hook-form';
 import Spacer from './UI/Spacer';
 import { colors, styles } from '../styles/styles';
 import { Context as AuthContext } from '../context/AuthContext';
+import MyInput from './UI/MyInput';
 
 const AuthForm = ({
   title,
@@ -58,7 +59,7 @@ const AuthForm = ({
         {showSignUp ? (
           <>
             <Controller
-              as={<Input />}
+              as={<MyInput />}
               label="Choose a screen name"
               placeholder="Minimum of 3 characters"
               autoCapitalize="none"
@@ -77,7 +78,7 @@ const AuthForm = ({
           </>
         ) : null}
         <Controller
-          as={<Input />}
+          as={<MyInput />}
           label="Your email address"
           keyboardType="email-address"
           autoCorrect={false}
@@ -99,7 +100,7 @@ const AuthForm = ({
           </Text>
         )}
         <Controller
-          as={<Input />}
+          as={<MyInput />}
           label="Your password"
           secureTextEntry
           autoCapitalize="none"

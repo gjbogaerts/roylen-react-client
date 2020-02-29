@@ -7,14 +7,7 @@ import {
   Alert,
   ActivityIndicator
 } from 'react-native';
-import {
-  Button,
-  Text,
-  Card,
-  Input,
-  ButtonGroup,
-  Avatar
-} from 'react-native-elements';
+import { Button, Text, Card, ButtonGroup, Avatar } from 'react-native-elements';
 import { useForm, Controller } from 'react-hook-form';
 import { styles } from '../styles/styles';
 import { getBaseUrl } from '../api/axios';
@@ -24,6 +17,7 @@ import Spacer from '../components/UI/Spacer';
 import MyOverlay from '../components/UI/MyOverlay';
 import Ads from '../components/Ads';
 import useAuthInfo from '../hooks/useAuthInfo';
+import MyInput from '../components/UI/MyInput';
 
 const UserProfileScreen = () => {
   const { signout, updateProfileInfo, checkUniqueEmail } = useContext(
@@ -149,7 +143,7 @@ const UserProfileScreen = () => {
             <Spacer />
             <Spacer />
             <Controller
-              as={<Input />}
+              as={<MyInput />}
               label="Your email address"
               keyboardType="email-address"
               autoCapitalize="none"

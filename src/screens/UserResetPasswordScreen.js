@@ -1,9 +1,10 @@
 import React, { useState, useContext } from 'react';
 import { View } from 'react-native';
-import { Card, Text, Input, Button } from 'react-native-elements';
+import { Card, Text, Button } from 'react-native-elements';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { styles } from '../styles/styles';
 import { Context as AuthContext } from '../context/AuthContext';
+import MyInput from '../components/UI/MyInput';
 
 const ResetPasswordScreen = () => {
   const [email, setEmail] = useState('');
@@ -43,7 +44,7 @@ const ResetPasswordScreen = () => {
         <View style={styles.cardContainer}>
           <Card title="Send reset email">
             <>
-              <Input
+              <MyInput
                 label="Email"
                 placeholder="Please enter your email address"
                 value={email}
@@ -62,13 +63,13 @@ const ResetPasswordScreen = () => {
             {renderFirstMessage()}
           </Card>
           <Card title="Reset password">
-            <Input
+            <MyInput
               label="Secret key"
               placeholder="You received it in your mail"
               value={secretKey}
               onChangeText={setSecretKey}
             />
-            <Input
+            <MyInput
               label="Your new password"
               secureTextEntry
               autoCapitalize="none"
@@ -76,7 +77,7 @@ const ResetPasswordScreen = () => {
               onChangeText={val => setPw1(val)}
               value={pw1}
             />
-            <Input
+            <MyInput
               label="Repeat your new password"
               secureTextEntry
               autoCapitalize="none"
