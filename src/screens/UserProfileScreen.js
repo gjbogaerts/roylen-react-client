@@ -1,4 +1,4 @@
-import React, { useContext, useState, Fragment } from 'react';
+import React, { useContext, useState, Fragment, useEffect } from 'react';
 import * as ImagePicker from 'expo-image-picker';
 import {
   View,
@@ -8,7 +8,7 @@ import {
   ActivityIndicator
 } from 'react-native';
 import { Button, Text, Card, ButtonGroup, Avatar } from 'react-native-elements';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { styles } from '../styles/styles';
 import { getBaseUrl } from '../api/axios';
 import { Context as AuthContext } from '../context/AuthContext';
@@ -30,8 +30,33 @@ const UserProfileScreen = () => {
   const [adsVisible, setAdsVisible] = useState(false);
   const [myAds, setMyAds] = useState([]);
   const [useSaved, setUseSaved] = useState(false);
-  const { handleSubmit, control, errors, setError } = useForm();
   const user = useAuthInfo();
+
+  const {
+    handleSubmit,
+    errors,
+    setError,
+    register,
+    unregister,
+    setValue
+  } = useForm();
+
+  useEffect(() => {
+    register(
+      {
+        name: 'email'
+      },
+      {
+        required: 'You need to fill out an email address',
+        pattern: {
+          // eslint-disable-next-line no-useless-escape
+          value: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/i,
+          message: 'This is not a valid email address'
+        }
+      }
+    );
+    return () => unregister('email');
+  }, [register, unregister, setValue, user]);
 
   const showUserAds = async () => {
     const userAds = await getUserAds(user._id);
@@ -47,22 +72,21 @@ const UserProfileScreen = () => {
     setAdsVisible(true);
   };
 
-  const onChange = args => {
-    return {
-      value: args[0].nativeEvent.text
-    };
-  };
-
   const handleProfileChange = async data => {
-    const { email } = data;
-    const isUnique = await checkUniqueEmail(email);
-    if (!isUnique) {
-      setError(
-        'email',
-        'notUnique',
-        'This email address is already in use; please use another email address.'
-      );
-      return;
+    let { email } = data;
+    if (email !== user.email) {
+      const isUnique = await checkUniqueEmail(email);
+      if (!isUnique) {
+        setError(
+          'email',
+          'notUnique',
+          'This email address is already in use; please use another email address.'
+        );
+        return;
+      }
+    }
+    if (!email) {
+      email = user.email;
     }
     updateProfileInfo(email, profilePic);
   };
@@ -142,26 +166,15 @@ const UserProfileScreen = () => {
 
             <Spacer />
             <Spacer />
-            <Controller
-              as={<MyInput />}
+            <MyInput
               label="Your email address"
               keyboardType="email-address"
               autoCapitalize="none"
               name="email"
-              defaultValue=""
-              onChange={onChange}
-              control={control}
-              rules={{
-                required: true,
-                // eslint-disable-next-line no-useless-escape
-                pattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/i
-              }}
+              onChangeText={value => setValue('email', value)}
             />
             {errors.email && (
-              <Text style={styles.error}>
-                {errors.email.message ||
-                  'This is not a well-formed email address; please try again.'}
-              </Text>
+              <Text style={styles.error}>{errors.email.message}</Text>
             )}
             <Text style={{ marginLeft: 10 }}>
               Choose a profile picture from:

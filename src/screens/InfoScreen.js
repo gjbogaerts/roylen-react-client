@@ -1,15 +1,16 @@
-import React, { useState, useContext, useCallback } from 'react';
+import React, { useState, useContext, useCallback, useEffect } from 'react';
 import { ScrollView, View, TouchableOpacity } from 'react-native';
 import { Text, Card, Button, Overlay } from 'react-native-elements';
+import { useForm } from 'react-hook-form';
 import { useFocusEffect } from '@react-navigation/native';
 import { styles, colors } from '../styles/styles';
 import { Context as MessageContext } from '../context/MessageContext';
 import useAuthInfo from '../hooks/useAuthInfo';
 import MyInput from '../components/UI/MyInput';
 
+const defaultValues = { email: '', msg: '' };
+
 const InfoScreen = () => {
-  const [msg, setMsg] = useState('');
-  const [email, setEmail] = useState('');
   const [isVisible1, setisVisible1] = useState(false);
   const [isVisible2, setisVisible2] = useState(false);
   const [isVisible3, setisVisible3] = useState(false);
@@ -17,6 +18,39 @@ const InfoScreen = () => {
   const [isVisible5, setisVisible5] = useState(false);
   const [isVisible6, setisVisible6] = useState(false);
   const { state, sendToRoylen, cleanUpMessage } = useContext(MessageContext);
+
+  const {
+    register,
+    setValue,
+    handleSubmit,
+    errors,
+    reset,
+    watch,
+    unregister
+  } = useForm({
+    defaultValues
+  });
+
+  const values = watch();
+
+  useEffect(() => {
+    register({
+      name: 'email'
+    });
+    register(
+      {
+        name: 'msg'
+      },
+      {
+        required: "You didn't fill out the message form",
+        minLength: {
+          value: 5,
+          message: 'At least 5 characters'
+        }
+      }
+    );
+    return () => unregister(['email', 'msg']);
+  }, [register, unregister]);
 
   useFocusEffect(
     useCallback(() => {
@@ -30,14 +64,10 @@ const InfoScreen = () => {
 
   const user = useAuthInfo();
 
-  const closeForm = () => {
-    setMsg('');
-    setEmail('');
-  };
-  const sendMsg = () => {
-    const ident = email ? email : user.email ? user.email : '';
-    sendToRoylen(msg, ident);
-    closeForm();
+  const sendMsg = data => {
+    const ident = data.email ? data.email : user.email ? user.email : '';
+    reset(defaultValues);
+    sendToRoylen(data.msg, ident);
   };
   return (
     <ScrollView style={styles.container}>
@@ -53,21 +83,26 @@ const InfoScreen = () => {
               <MyInput
                 label="Your email address"
                 placeholder="Not required"
-                value={email}
-                onChangeText={setEmail}
+                name="email"
+                value={values.email}
+                onChangeText={value => setValue('email', value)}
               />
             ) : null}
             <MyInput
               label="Your message"
               placeholder="Type your message to us"
               multiline
-              value={msg}
-              onChangeText={setMsg}
+              value={values.msg}
+              name="msg"
+              onChangeText={value => setValue('msg', value)}
             />
+            {errors.msg && (
+              <Text style={styles.error}>{errors.msg.message}</Text>
+            )}
             <View style={styles.buttonRow}>
               <Button
                 title="Cancel"
-                onPress={closeForm}
+                onPress={() => reset(defaultValues)}
                 buttonStyle={{
                   ...styles.Button.buttonStyle,
                   backgroundColor: colors.accentedColor
@@ -83,7 +118,7 @@ const InfoScreen = () => {
               />
               <Button
                 title="Send"
-                onPress={sendMsg}
+                onPress={handleSubmit(sendMsg)}
                 buttonStyle={{ ...styles.Button.buttonStyle }}
                 containerStyle={{
                   ...styles.Button.containerStyle,

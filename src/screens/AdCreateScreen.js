@@ -11,7 +11,7 @@ import {
 } from 'react-native-elements';
 import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { styles } from '../styles/styles';
 import categories from '../models/Categories';
 import PickerModal from 'react-native-picker-modal-view';
@@ -22,13 +22,12 @@ import useAuthInfo from '../hooks/useAuthInfo';
 
 const AdCreateScreen = () => {
   const [category, setCategory] = useState(null);
-  const [virtualPrice, setVirtualPrice] = useState('');
   const [pics, setPics] = useState(null);
   const [wanted, setWanted] = useState(false);
   const [error, setErrorMessage] = useState('');
   const [location, setLocation] = useState(null);
   const { placeAd } = useContext(AdContext);
-  const { handleSubmit, control, errors } = useForm();
+  const { handleSubmit, register, setValue, errors, unregister } = useForm();
   const user = useAuthInfo();
   const selectCamera = <Text>Camera</Text>;
   const selectCameraRoll = <Text>Photo Library</Text>;
@@ -36,6 +35,44 @@ const AdCreateScreen = () => {
   useEffect(() => {
     getLocation();
   }, []);
+
+  useEffect(() => {
+    register(
+      {
+        name: 'title'
+      },
+      {
+        minLength: {
+          value: 5,
+          message: 'Minimum of 5 characters'
+        },
+        maxLength: {
+          value: 50,
+          message: 'Maximum of 50 characters'
+        }
+      }
+    );
+    register(
+      {
+        name: 'description'
+      },
+      {
+        maxLength: { value: 5200, message: 'No more than 5200 characters' },
+        minLength: { value: 5, message: 'No less than 5 characters' }
+      }
+    );
+    register(
+      { name: 'virtualPrice' },
+      {
+        min: {
+          value: 0,
+          message: "You can't provide a negative value"
+        },
+        validate: value => !isNaN(value) || 'This needs to be a number'
+      }
+    );
+    return () => unregister(['title', 'description', 'virtualPrice']);
+  }, [register, unregister]);
 
   const getLocation = async () => {
     let { status } = await Location.requestPermissionsAsync();
@@ -97,12 +134,6 @@ const AdCreateScreen = () => {
     }
   };
 
-  const onChange = args => {
-    return {
-      value: args[0].nativeEvent.text
-    };
-  };
-
   const submitAd = data => {
     const { latitude, longitude } = location.coords;
     const locationToSave = { longitude, latitude };
@@ -110,13 +141,12 @@ const AdCreateScreen = () => {
       data.title,
       data.description,
       category,
-      virtualPrice,
+      Math.round(data.virtualPrice),
       pics,
       user._id,
       wanted,
       locationToSave
     );
-    // console.log(ad);
     placeAd(ad);
   };
 
@@ -155,41 +185,36 @@ const AdCreateScreen = () => {
               uncheckedIcon="circle-o"
             />
 
-            <Controller
-              as={<MyInput />}
+            <MyInput
               label="Title"
               placeholder="Min 5, max. 50 chars"
               name="title"
               defaultValue=""
-              onChange={onChange}
-              control={control}
-              rules={{ required: true, minLength: 5, maxLength: 50 }}
+              onChangeText={text => setValue('title', text)}
             />
             {errors.title && (
-              <Text style={styles.error}>Minimum 5, maximum 50 characters</Text>
+              <Text style={styles.error}>{errors.title.message}</Text>
             )}
 
-            <Controller
-              as={<MyInput />}
+            <MyInput
               label="Description"
               placeholder="Describe the object in max 5200 chars"
               multiline
               name="description"
-              onChange={onChange}
-              control={control}
-              rules={{ required: true, maxLength: 5200 }}
+              onChangeText={text => setValue('description', text)}
             />
             {errors.description && (
-              <Text style={styles.error}>
-                This field is required, maximum 5200 characters
-              </Text>
+              <Text style={styles.error}>{errors.description.message}</Text>
             )}
             <MyInput
               label="Your price"
               placeholder="Set your price in nix, only whole numbers"
-              value={virtualPrice}
-              onChangeText={setVirtualPrice}
+              onChangeText={price => setValue('virtualPrice', price)}
+              name="virtualPrice"
             />
+            {errors.virtualPrice && (
+              <Text style={styles.error}>{errors.virtualPrice.message}</Text>
+            )}
             <PickerModal
               items={categories}
               showAlphabeticalIndex

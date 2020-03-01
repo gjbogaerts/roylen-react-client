@@ -1,11 +1,12 @@
-import React, { useContext, useCallback } from 'react';
+import React, { useContext, useCallback, useEffect } from 'react';
 import { View } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
-import { Button, Text, Card, Input } from 'react-native-elements';
+import { Button, Text, Card } from 'react-native-elements';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { colors, styles } from '../styles/styles';
 import { Context as MessageContext } from '../context/MessageContext';
+import MyInput from '../components/UI/MyInput';
 import Message from '../models/Message';
 import Spacer from '../components/UI/Spacer';
 import useAuthInfo from '../hooks/useAuthInfo';
@@ -13,9 +14,28 @@ import useAuthInfo from '../hooks/useAuthInfo';
 const AdContactScreen = ({ route, navigation }) => {
   const currentAd = route.params.concerning;
   const { state, sendMessage, cleanUpMessage } = useContext(MessageContext);
-  const { control, handleSubmit, errors } = useForm();
+  const { register, setValue, handleSubmit, errors, unregister } = useForm();
 
   const user = useAuthInfo();
+
+  useEffect(() => {
+    register(
+      {
+        name: 'name'
+      },
+      { required: 'You have to provide your name' }
+    );
+    register(
+      { name: 'message' },
+      {
+        minLength: {
+          value: 2,
+          message: 'You have to provide a message of at least two characters'
+        }
+      }
+    );
+    return unregister(['name', 'message']);
+  }, [register, unregister]);
 
   useFocusEffect(
     useCallback(() => {
@@ -38,12 +58,6 @@ const AdContactScreen = ({ route, navigation }) => {
       </View>
     );
   }
-
-  const onChange = args => {
-    return {
-      value: args[0].nativeEvent.text
-    };
-  };
 
   const startSendSequence = data => {
     const msg = new Message(
@@ -69,34 +83,26 @@ const AdContactScreen = ({ route, navigation }) => {
                 {state.errorMessage}
               </Text>
             ) : null}
-            <Controller
-              as={<Input />}
+            <MyInput
               label="Your name"
               name="name"
               defaultValue=""
-              control={control}
-              onChange={onChange}
+              onChangeText={text => setValue('name', text)}
               autoCorrect={false}
-              rules={{ required: true }}
             />
             {errors.name && (
-              <Text style={styles.error}>This field is required</Text>
+              <Text style={styles.error}>{errors.name.message}</Text>
             )}
-            <Controller
-              as={<Input />}
+            <MyInput
               label="Your message"
               scrollEnabled={false}
               multiline
               name="message"
               defaultValue=""
-              control={control}
-              onChange={onChange}
-              rules={{ required: true, minLength: 3 }}
+              onChangeText={text => setValue('message', text)}
             />
             {errors.message && (
-              <Text style={styles.error}>
-                You need to provide a message of at least 3 characters
-              </Text>
+              <Text style={styles.error}>{errors.message.message}</Text>
             )}
             <View style={styles.buttonRow}>
               <Button

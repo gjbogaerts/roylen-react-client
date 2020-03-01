@@ -1,18 +1,28 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View } from 'react-native';
 import { Text, Button } from 'react-native-elements';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { styles, colors } from '../styles/styles';
 import MyInput from './UI/MyInput';
 
 const MessageModal = ({ receiverName, closeForm, sendMsg }) => {
-  const { handleSubmit, control, errors } = useForm();
+  const { handleSubmit, errors, setValue, register, unregister } = useForm();
 
-  const onChange = args => {
-    return {
-      value: args[0].nativeEvent.text
-    };
-  };
+  useEffect(() => {
+    register(
+      {
+        name: 'msg'
+      },
+      {
+        minLength: {
+          value: 2,
+          message: 'You need to type in a message of at least two characters'
+        }
+      }
+    );
+    return () => unregister('msg');
+  }, [register, unregister]);
+
   const onSubmit = data => {
     sendMsg(data.msg);
   };
@@ -20,19 +30,14 @@ const MessageModal = ({ receiverName, closeForm, sendMsg }) => {
     <View style={{ marginTop: 22 }}>
       <View style={{ marginTop: 22 }}>
         <Text style={styles.formText}>Message for {receiverName}</Text>
-        <Controller
-          as={<MyInput />}
+        <MyInput
           multiline
           label="Type your message"
           defaultValue=""
-          control={control}
-          onChange={onChange}
-          rules={{ required: true, minLength: 3 }}
+          onChangeText={text => setValue('msg', text)}
           name="msg"
         />
-        {errors.msg && (
-          <Text style={styles.error}>Minimum of 3 characters</Text>
-        )}
+        {errors.msg && <Text style={styles.error}>{errors.msg.message}</Text>}
         <View style={styles.buttonRow}>
           <Button
             title="Cancel"
