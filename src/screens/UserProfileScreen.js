@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { Button, Text, Card, ButtonGroup, Avatar } from 'react-native-elements';
 import { useForm } from 'react-hook-form';
-import { styles } from '../styles/styles';
+import { styles, colors } from '../styles/styles';
 import { getBaseUrl } from '../api/axios';
 import { Context as AuthContext } from '../context/AuthContext';
 import { Context as AdContext } from '../context/AdContext';
@@ -165,7 +165,6 @@ const UserProfileScreen = () => {
             </View>
 
             <Spacer />
-            <Spacer />
             <MyInput
               label="Your email address"
               keyboardType="email-address"
@@ -211,12 +210,27 @@ const UserProfileScreen = () => {
         />
       </MyOverlay>
       <View style={styles.contentContainer}>
+        <View style={styles.containerRow}>
+          <Button title="Your ads" onPress={showUserAds} />
+          <Button title="Your favorites" onPress={showSavedAds} />
+          <Button
+            title="Log out"
+            onPress={signout}
+            buttonStyle={{
+              ...styles.Button.buttonStyle,
+              backgroundColor: colors.accentedColor
+            }}
+            titleStyle={{
+              ...styles.Button.titleStyle,
+              color: colors.color
+            }}
+            containerStyle={{
+              ...styles.Button.containerStyle
+            }}
+          />
+        </View>
         <Text h4>Your Profile</Text>
         {user ? printUserData() : null}
-
-        <Button title="See your current ads" onPress={showUserAds} />
-        <Button title="See your saved ads" onPress={showSavedAds} />
-        <Button title="Log out" onPress={signout} />
       </View>
     </ScrollView>
   );

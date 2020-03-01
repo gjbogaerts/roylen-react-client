@@ -16,7 +16,6 @@ export const officalStyles = StyleSheet.create({
   },
   contentContainer: {
     flex: 1,
-    marginTop: 15,
     marginHorizontal: 5,
     marginBottom: 20
   },

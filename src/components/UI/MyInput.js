@@ -20,8 +20,9 @@ const localStyles = StyleSheet.create({
     borderBottomWidth: 1,
     borderLeftWidth: 1,
     borderColor: colors.color,
-    borderBottomLeftRadius: 5,
-    paddingLeft: 5,
+    borderBottomLeftRadius: 15,
+    borderTopLeftRadius: 5,
+    paddingLeft: 10,
     paddingBottom: 5,
     width: '100%',
     color: colors.color

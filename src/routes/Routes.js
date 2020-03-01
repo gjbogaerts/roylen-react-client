@@ -123,7 +123,7 @@ const TabComponent = () => {
           name="Profile"
           component={UserProfileScreen}
           options={{
-            title: 'Profile',
+            title: 'My Roylen',
             tabBarIcon: ({ focused }) => {
               let c = focused ? colors.color : colors.backgroundColor;
               return <Ionicons name="ios-person" size={25} color={c} />;
