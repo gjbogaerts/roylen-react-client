@@ -37,12 +37,19 @@ const AdsDetailScreen = ({ navigation }) => {
   };
 
   const favoriteAd = async () => {
+    if (!user || !user._id) {
+      setAlert(
+        'You need to log in to be able to save this ad to your favorites list.'
+      );
+      return;
+    }
     await loveAd(user._id, currentAd._id);
     setAlert('This ad has been added to your favorites list');
   };
 
   if (alert) {
     Alert.alert('Thank you', alert, ['OK']);
+    setAlert('');
   }
 
   return (
